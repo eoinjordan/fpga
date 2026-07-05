@@ -1,0 +1,12 @@
+description: |
+  SemNPU semantic/inference coprocessor (07-semnpu/rtl/semnpu_regs.v).
+  128-bit bitset similarity (POPAND/HAMMING) and streaming int8
+  multiply-accumulate (DOT8) behind memory-mapped registers.
+
+compatible: "eoin,semnpu"
+
+include: base.yaml
+
+properties:
+  reg:
+    required: true

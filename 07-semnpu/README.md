@@ -1,51 +1,59 @@
-# Stage 07 — The SemNPU coprocessor (planned)
+# Stage 07 — The SemNPU coprocessor (register file working in simulation)
 
-**Prerequisite: stage 06 CPU running C with memory-mapped peripherals.**
+The stage 02 blocks wrapped in a memory-mapped register file a CPU can
+drive. **Already integrated and proven**: stage 06's testbench boots
+PicoRV32 firmware that exercises every register below and checks results
+against the Python golden model. Run it from `06-riscv-soc/` with `make`.
 
-The payoff stage: wrap stage 02's sim-proven blocks (popand, hamming,
-dot8) in a register file the CPU can drive.
+## What's here
 
-## Register map (draft)
+[rtl/semnpu_regs.v](rtl/semnpu_regs.v) — the register file. Bus protocol:
+`sel` pulses one clock per access, `wstrb != 0` means write, reads land
+in `rdata` the next cycle.
 
-| Offset | Name | Function |
-|--------|------|----------|
-| 0x00 | CTRL | bit0 start, bit1 clear; op select in bits 7:4 (POPAND / HAMMING / DOT8 / ARGMAX) |
-| 0x04 | STATUS | bit0 done |
-| 0x10–0x1C | A[0..3] | operand A, 128 bits as 4 words |
-| 0x20–0x2C | B[0..3] | operand B |
-| 0x30 | STREAM | write int8 pairs here for DOT8 (a in [7:0], b in [15:8]) |
-| 0x34 | RESULT | score / distance / accumulator / argmax index |
+## Register map (base 0x8000_1000 on the SemRV bus)
 
-Base address 0x8000_0000 on the PicoRV32 bus.
+| Offset | Name | Access | Function |
+|--------|------|--------|----------|
+| 0x00–0x0C | A0..A3 | W | operand A, 128 bits as 4 words |
+| 0x10–0x1C | B0..B3 | W | operand B |
+| 0x20 | POPAND | R | popcount(A & B) — semantic similarity |
+| 0x24 | HAMMING | R | popcount(A ^ B) — bitset distance |
+| 0x28 | STREAM | W | int8 pair: a=[7:0], b=[15:8]; accumulates a×b |
+| 0x2C | CLEAR | W | zero the DOT8 accumulator |
+| 0x30 | ACC | R | signed 32-bit dot-product accumulator |
 
-## Software side
+The C view (for stage 06 upgrade path / stage 08 driver):
 
 ```c
-semnpu_write_vec(SEM_A, bitset_a, 4);
-semnpu_write_vec(SEM_B, bitset_b, 4);
-semnpu_start(SEM_OP_POPAND);
-uint32_t score = semnpu_result();
+#define SEMNPU ((volatile uint32_t*)0x80001000)
+SEMNPU[0x2C/4] = 1;                      // clear
+for (int i = 0; i < n; i++)
+    SEMNPU[0x28/4] = (a[i] & 0xFF) | ((uint32_t)(b[i] & 0xFF) << 8);
+int32_t acc = (int32_t)SEMNPU[0x30/4];   // dot product
 ```
 
-Golden-model discipline still applies: the same Python models from
-stage 02 generate the firmware's test vectors, and the C test suite
-checks hardware results against baked-in expected values.
+## Growth plan
 
-## Demos (pick by mood)
+1. **ARGMAX**: stream K class scores, read back the index of the max —
+   a top-1 classifier head in hardware.
+2. **BLOOM**: a bit array in BSRAM + k hash probes; registers for
+   key-in / verdict-out (definitely-absent / maybe-present).
+3. **Weight memory + batch mode**: store N reference vectors in BSRAM,
+   hardware streams A against all of them and returns the best match —
+   1-nearest-neighbour in silicon. This is where the 48 DSP multipliers
+   start earning their keep (parallel MACs).
+4. **PCPI custom instruction**: PicoRV32's coprocessor interface lets you
+   make `popcnt rd, rs1, rs2` a real instruction instead of MMIO — the
+   "custom RISC-V extension" story, and a stage 08 devicetree exercise.
+5. **DMA from SDRAM**: feature vectors too big for BSRAM stream straight
+   from the 64 Mbit SDRAM.
 
-1. **Semantic sprite AI**: each NPC carries a feature bitset; POPAND
-   against the player's state picks its behavior. Retro game where the
-   "AI" is real hardware similarity search.
-2. **Edge Impulse dashboard**: stream int8 feature vectors over UART,
-   DOT8 computes class scores against stored weights, PPU renders
-   confidence bars at 60 fps.
-3. **Bloom gate visualizer**: k hash probes against a bit array in BSRAM,
-   screen shows definitely-absent / maybe-present verdicts live.
+## Demos (pick by mood, all after the board arrives)
 
-## Stretch
-
-- Custom PicoRV32 instruction via the PCPI coprocessor interface
-  (`popcnt rd, rs1, rs2` instead of memory-mapped registers)
-- DMA: let the SemNPU read vectors straight out of SDRAM
-- Batch mode: N stored reference vectors, hardware returns top-1 index
-  (that's a 1-nearest-neighbour classifier in silicon)
+- **Semantic sprite AI**: NPCs carry feature bitsets; POPAND against the
+  player's state bitset picks behavior. The game's "AI" is hardware
+  similarity search.
+- **Edge Impulse dashboard**: int8 feature vectors over UART, DOT8
+  scores against stored weights, stage 04 PPU renders confidence bars.
+- **Bloom gate visualizer**: live membership verdicts on screen.

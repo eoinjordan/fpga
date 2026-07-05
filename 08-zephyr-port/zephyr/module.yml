@@ -1,0 +1,7 @@
+name: semboy20k
+build:
+  settings:
+    board_root: ..
+    dts_root: ..
+  cmake: ../drivers
+  kconfig: ../drivers/Kconfig

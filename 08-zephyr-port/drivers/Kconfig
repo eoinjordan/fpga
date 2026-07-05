@@ -1,0 +1,7 @@
+config SEMNPU
+	bool "SemNPU semantic/inference coprocessor driver"
+	default y
+	depends on DT_HAS_EOIN_SEMNPU_ENABLED
+	help
+	  Driver for the memory-mapped SemNPU register file
+	  (popand / hamming / streaming int8 dot product).

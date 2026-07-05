@@ -1,0 +1,6 @@
+board:
+  name: tangnano20k_semrv
+  full_name: Tang Nano 20K SemRV (LiteX/VexRiscv soft SoC)
+  vendor: eoin
+  socs:
+    - name: litex_vexriscv

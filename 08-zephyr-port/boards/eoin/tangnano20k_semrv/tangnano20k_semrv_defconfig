@@ -1,0 +1,8 @@
+# Default kernel config for the Tang Nano 20K SemRV board
+CONFIG_CONSOLE=y
+CONFIG_SERIAL=y
+CONFIG_UART_CONSOLE=y
+CONFIG_UART_INTERRUPT_DRIVEN=y
+# LiteX default system clock; TODO: match your SoC's sys_clk_freq
+CONFIG_SYS_CLOCK_HW_CYCLES_PER_SEC=48000000
+CONFIG_LITEX_TIMER=y

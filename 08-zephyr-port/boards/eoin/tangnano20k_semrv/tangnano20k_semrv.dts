@@ -1,0 +1,76 @@
+/*
+ * Tang Nano 20K running the SemRV LiteX/VexRiscv SoC.
+ *
+ * Every address marked TODO(csr) must be copied from the csr.json that
+ * LiteX generates for YOUR SoC build -- these are placeholders using the
+ * common LiteX defaults. The structure is what matters.
+ */
+/dts-v1/;
+
+#include <mem.h>
+
+/ {
+	model = "Tang Nano 20K SemRV";
+	compatible = "eoin,tangnano20k-semrv";
+
+	chosen {
+		zephyr,console = &uart0;
+		zephyr,shell-uart = &uart0;
+		zephyr,sram = &ram0;
+	};
+
+	cpus {
+		#address-cells = <1>;
+		#size-cells = <0>;
+
+		cpu0: cpu@0 {
+			compatible = "litex,vexriscv-standard";
+			device_type = "cpu";
+			reg = <0>;
+			riscv,isa-base = "rv32i";
+			riscv,isa-extensions = "i", "m", "zicsr", "zifencei";
+
+			intc0: interrupt-controller {
+				compatible = "litex,vexriscv-intc0";
+				#interrupt-cells = <2>;
+				interrupt-controller;
+			};
+		};
+	};
+
+	soc {
+		#address-cells = <1>;
+		#size-cells = <1>;
+		compatible = "simple-bus";
+		ranges;
+
+		ram0: memory@40000000 {
+			device_type = "memory";
+			/* the 64 Mbit SDRAM = 8 MB; TODO(csr): main_ram base/size */
+			reg = <0x40000000 DT_SIZE_M(8)>;
+		};
+
+		uart0: serial@e0001800 {
+			compatible = "litex,uart";
+			reg = <0xe0001800 0x100>;          /* TODO(csr): uart base */
+			interrupt-parent = <&intc0>;
+			interrupts = <2 10>;               /* TODO(csr): uart irq */
+			status = "okay";
+		};
+
+		timer0: timer@e0002800 {
+			compatible = "litex,timer0";
+			reg = <0xe0002800 0x40>;           /* TODO(csr): timer0 base */
+			interrupt-parent = <&intc0>;
+			interrupts = <1 10>;               /* TODO(csr): timer0 irq */
+			status = "okay";
+		};
+
+		semnpu0: semnpu@80001000 {
+			compatible = "eoin,semnpu";
+			/* matches semnpu_regs.v's map; fixed wishbone slave address */
+			reg = <0x80001000 0x100>;
+			status = "okay";
+		};
+	};
+};

@@ -9,8 +9,9 @@ vendor/
 *.fs
 build/
 
-# Generated test vectors
+# Generated test vectors and firmware
 02-golden-models/vectors/
+06-riscv-soc/firmware/*.hex
 
 # Gowin EDA project junk
 impl/

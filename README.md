@@ -19,12 +19,16 @@ official examples in `vendor/`.
 | 03 | [03-hdmi/](03-hdmi/) | Yes (sim for timing) | HDMI/DVI output: 720p colour bars, video timing generator |
 | 04 | [04-tilemap-sprites/](04-tilemap-sprites/) | Yes | Tile/sprite PPU: tilemap, palette, sprite overlay |
 | 05 | [05-input-audio/](05-input-audio/) | Yes | Buttons/controller input, square-wave audio via MAX98357A |
-| 06 | [06-riscv-soc/](06-riscv-soc/) | Yes | PicoRV32 soft SoC: UART console, memory-mapped peripherals |
-| 07 | [07-semnpu/](07-semnpu/) | Yes | The SemNPU coprocessor wired to the CPU: POPAND, HAMMING, DOT8, ARGMAX |
+| 06 | [06-riscv-soc/](06-riscv-soc/) | No (sim works today) | **SemRV**: PicoRV32 SoC running hand-assembled RV32I firmware — boots, prints over UART, drives the NPU |
+| 07 | [07-semnpu/](07-semnpu/) | No (sim works today) | The SemNPU coprocessor register file: POPAND, HAMMING, DOT8 — already integrated with stage 06's CPU |
+| 08 | [08-zephyr-port/](08-zephyr-port/) | Yes | Zephyr board port: devicetree, `eoin,semnpu` binding, driver, sample app (out-of-tree module skeleton ready) |
+| 09 | [09-retro-cpu-cores/](09-retro-cpu-cores/) | Yes | Pluggable retro CPUs (65C816 / ARM7TDMI / SM83) for the GB-Studio-like engine builder |
 
 Each stage directory has its own README with goals, theory, exercises, and
 a `make` flow. Do them in order — every stage reuses modules from the one
-before it.
+before it. Stages 01, 02, 03 (sim), 06, and 07 are fully runnable today
+with no hardware; try `cd 06-riscv-soc && make` to watch a RISC-V CPU
+boot and drive the inference coprocessor in simulation.
 
 ## Quick start
 
