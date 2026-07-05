@@ -1,0 +1,108 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 900" font-family="Consolas, 'Courier New', monospace">
+  <defs>
+    <marker id="arr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto">
+      <path d="M0,0 L10,5 L0,10 z" fill="#4dd8e6"/>
+    </marker>
+    <marker id="arrO" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto">
+      <path d="M0,0 L10,5 L0,10 z" fill="#f0a832"/>
+    </marker>
+  </defs>
+
+  <rect width="1600" height="900" fill="#0d1526"/>
+  <rect x="20" y="20" width="1560" height="860" fill="none" stroke="#2a3f66" stroke-width="2"/>
+
+  <text x="800" y="70" text-anchor="middle" fill="#4dd8e6" font-size="20" letter-spacing="8">TUTORIAL 3</text>
+  <text x="800" y="130" text-anchor="middle" font-size="56" font-weight="bold">
+    <tspan fill="#f5f1e8">SemRV + </tspan><tspan fill="#4dd8e6">SemNPU</tspan>
+  </text>
+  <text x="800" y="170" text-anchor="middle" fill="#f0a832" font-size="20">PicoRV32 firmware drives a memory-mapped inference coprocessor</text>
+
+  <g>
+    <rect x="60" y="220" width="340" height="280" rx="8" fill="#131f38" stroke="#2a3f66" stroke-width="2"/>
+    <text x="230" y="255" text-anchor="middle" fill="#4dd8e6" font-size="20" font-weight="bold">1. CPU + FIRMWARE</text>
+    <text x="85" y="295" fill="#8fa3c7" font-size="15">06-riscv-soc/rtl/simple_soc.v</text>
+    <text x="85" y="330" fill="#c9d6ee" font-size="15">picorv32, RV32I</text>
+    <text x="85" y="355" fill="#c9d6ee" font-size="15">reset PC: 0x0000_0000</text>
+    <text x="85" y="380" fill="#c9d6ee" font-size="15">no caches, no IRQs yet</text>
+    <text x="85" y="420" fill="#8fa3c7" font-size="14">build_firmware.py encodes:</text>
+    <text x="105" y="445" fill="#7de8a0" font-size="15">LUI / ADDI / LW / SW / JAL</text>
+    <text x="85" y="475" fill="#8fa3c7" font-size="14">same Python computes golden NPU values</text>
+  </g>
+
+  <g>
+    <rect x="460" y="220" width="340" height="280" rx="8" fill="#131f38" stroke="#2a3f66" stroke-width="2"/>
+    <text x="630" y="255" text-anchor="middle" fill="#4dd8e6" font-size="20" font-weight="bold">2. NATIVE BUS</text>
+    <text x="485" y="295" fill="#8fa3c7" font-size="15">PicoRV32 valid/ready</text>
+    <text x="485" y="330" fill="#c9d6ee" font-size="15">mem_valid: CPU requests</text>
+    <text x="485" y="355" fill="#c9d6ee" font-size="15">mem_addr / wdata / wstrb</text>
+    <text x="485" y="380" fill="#c9d6ee" font-size="15">mem_ready: SoC completes</text>
+    <text x="485" y="420" fill="#7de8a0" font-size="15">answers in one cycle</text>
+    <text x="485" y="450" fill="#8fa3c7" font-size="14">reads present mem_rdata</text>
+    <text x="485" y="470" fill="#8fa3c7" font-size="14">during the ready cycle</text>
+  </g>
+
+  <g>
+    <rect x="860" y="220" width="340" height="280" rx="8" fill="#131f38" stroke="#2a3f66" stroke-width="2"/>
+    <text x="1030" y="255" text-anchor="middle" fill="#4dd8e6" font-size="20" font-weight="bold">3. MEMORY MAP</text>
+    <text x="885" y="295" fill="#c9d6ee" font-size="15">0x0000_0000 - 0x0000_0FFF</text>
+    <text x="905" y="318" fill="#7de8a0" font-size="15">4KB RAM, firmware.hex</text>
+    <text x="885" y="355" fill="#c9d6ee" font-size="15">0x8000_0000</text>
+    <text x="905" y="378" fill="#7de8a0" font-size="15">UART TX</text>
+    <text x="885" y="410" fill="#c9d6ee" font-size="15">0x8000_0004/08/0C/10</text>
+    <text x="905" y="433" fill="#7de8a0" font-size="15">REPORT0..2, DONE</text>
+    <text x="885" y="465" fill="#c9d6ee" font-size="15">0x8000_1000 - 0x8000_10FF</text>
+    <text x="905" y="488" fill="#f0a832" font-size="15">SemNPU register file</text>
+  </g>
+
+  <g>
+    <rect x="1260" y="220" width="280" height="280" rx="8" fill="#131f38" stroke="#2a3f66" stroke-width="2"/>
+    <text x="1400" y="255" text-anchor="middle" fill="#4dd8e6" font-size="20" font-weight="bold">4. TB VERDICT</text>
+    <rect x="1290" y="285" width="220" height="60" rx="6" fill="#12301f" stroke="#2e7d4f"/>
+    <text x="1400" y="322" text-anchor="middle" fill="#7de8a0" font-size="18">SemRV!</text>
+    <text x="1285" y="380" fill="#c9d6ee" font-size="15">popand  = 51</text>
+    <text x="1285" y="405" fill="#c9d6ee" font-size="15">hamming = 36</text>
+    <text x="1285" y="430" fill="#c9d6ee" font-size="15">dot8    = -5063</text>
+    <text x="1285" y="467" fill="#8fa3c7" font-size="14">PASS: tb_soc, 358 cycles</text>
+  </g>
+
+  <line x1="400" y1="360" x2="455" y2="360" stroke="#4dd8e6" stroke-width="3" marker-end="url(#arr)"/>
+  <line x1="800" y1="360" x2="855" y2="360" stroke="#4dd8e6" stroke-width="3" marker-end="url(#arr)"/>
+  <line x1="1200" y1="360" x2="1255" y2="360" stroke="#4dd8e6" stroke-width="3" marker-end="url(#arr)"/>
+
+  <g>
+    <rect x="60" y="560" width="1480" height="250" rx="8" fill="#101a30" stroke="#2a3f66" stroke-width="2"/>
+    <text x="800" y="598" text-anchor="middle" fill="#f0a832" font-size="20" font-weight="bold">SEMNPU: STAGE 02 BLOCKS BEHIND A 32-BIT REGISTER FILE</text>
+
+    <rect x="110" y="635" width="260" height="120" rx="8" fill="#131f38" stroke="#2a3f66"/>
+    <text x="240" y="665" text-anchor="middle" fill="#4dd8e6" font-size="17" font-weight="bold">BITSET OPERANDS</text>
+    <text x="135" y="700" fill="#c9d6ee" font-size="15">0x00-0x0C  A0..A3</text>
+    <text x="135" y="725" fill="#c9d6ee" font-size="15">0x10-0x1C  B0..B3</text>
+    <text x="135" y="748" fill="#8fa3c7" font-size="14">128 bits each, 4 words</text>
+
+    <rect x="455" y="635" width="260" height="120" rx="8" fill="#131f38" stroke="#2a3f66"/>
+    <text x="585" y="665" text-anchor="middle" fill="#4dd8e6" font-size="17" font-weight="bold">COMBINATIONAL READS</text>
+    <text x="480" y="700" fill="#c9d6ee" font-size="15">0x20 POPAND</text>
+    <text x="480" y="725" fill="#c9d6ee" font-size="15">0x24 HAMMING</text>
+    <text x="480" y="748" fill="#8fa3c7" font-size="14">popcount(A &amp; B), popcount(A ^ B)</text>
+
+    <rect x="800" y="635" width="260" height="120" rx="8" fill="#131f38" stroke="#2a3f66"/>
+    <text x="930" y="665" text-anchor="middle" fill="#4dd8e6" font-size="17" font-weight="bold">STREAMING DOT8</text>
+    <text x="825" y="700" fill="#c9d6ee" font-size="15">0x2C CLEAR</text>
+    <text x="825" y="725" fill="#c9d6ee" font-size="15">0x28 STREAM a,b</text>
+    <text x="825" y="748" fill="#8fa3c7" font-size="14">acc += signed int8 a*b</text>
+
+    <rect x="1145" y="635" width="260" height="120" rx="8" fill="#131f38" stroke="#2a3f66"/>
+    <text x="1275" y="665" text-anchor="middle" fill="#4dd8e6" font-size="17" font-weight="bold">RESULT</text>
+    <text x="1170" y="700" fill="#c9d6ee" font-size="15">0x30 ACC</text>
+    <text x="1170" y="725" fill="#c9d6ee" font-size="15">signed 32-bit read</text>
+    <text x="1170" y="748" fill="#8fa3c7" font-size="14">stage 08 driver wraps this API</text>
+
+    <line x1="370" y1="695" x2="450" y2="695" stroke="#f0a832" stroke-width="3" marker-end="url(#arrO)"/>
+    <line x1="715" y1="695" x2="795" y2="695" stroke="#f0a832" stroke-width="3" marker-end="url(#arrO)"/>
+    <line x1="1060" y1="695" x2="1140" y2="695" stroke="#f0a832" stroke-width="3" marker-end="url(#arrO)"/>
+
+    <text x="800" y="790" text-anchor="middle" fill="#8fa3c7" font-size="15">two accelerator idioms: answers always ready from registers, or stateful streams accumulated over many stores</text>
+  </g>
+
+  <text x="800" y="855" text-anchor="middle" fill="#8fa3c7" font-size="16" letter-spacing="4">RV32I &#183; 4KB RAM &#183; VALID/READY BUS &#183; MMIO NPU &#183; PYTHON-CHECKED FIRMWARE</text>
+</svg>

@@ -6,15 +6,15 @@ references below light up in the docs:
 | File | Used as |
 |------|---------|
 | `cover.png` | course-book front cover (root README header) |
-| `tutorial-01-sim-first.png` | stage 01/02 opener — sim-first workflow |
-| `tutorial-02-graphics-pipeline.png` | stage 03/04 opener — retro graphics pipeline |
-| `tutorial-03-semrv-semnpu.png` | stage 06/07 opener — SoC + NPU |
+| `tutorial-01-sim-first.svg` | stage 01/02 opener — sim-first workflow |
+| `tutorial-02-graphics-pipeline.svg` | stage 03/04 opener — retro graphics pipeline |
+| `tutorial-03-semrv-semnpu.svg` | stage 06/07 opener — SoC + NPU |
 
-## Accuracy notes — read before printing
+## Accuracy notes — read before regenerating
 
-The current art was generated from the project *concept* and disagrees
-with the implemented RTL in a few places. Either regenerate with these
-corrections or caption accordingly:
+The SVG tutorial openers in this folder use the implemented/planned values
+below. Keep these constraints if regenerating PNG artwork from the project
+concept, otherwise the art will contradict the RTL:
 
 1. **Video mode**: art says 640×480@60 (25.175 MHz); the repo implements
    **1280×720@60 (74.25 MHz)** — 1650×750 total, not 800×525.

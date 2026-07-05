@@ -1,0 +1,120 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 900" font-family="Consolas, 'Courier New', monospace">
+  <defs>
+    <marker id="arr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto">
+      <path d="M0,0 L10,5 L0,10 z" fill="#4dd8e6"/>
+    </marker>
+    <marker id="arrO" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto">
+      <path d="M0,0 L10,5 L0,10 z" fill="#f0a832"/>
+    </marker>
+  </defs>
+
+  <rect width="1600" height="900" fill="#0d1526"/>
+  <rect x="20" y="20" width="1560" height="860" fill="none" stroke="#2a3f66" stroke-width="2"/>
+
+  <text x="800" y="70" text-anchor="middle" fill="#4dd8e6" font-size="20" letter-spacing="8">TUTORIAL 2</text>
+  <text x="800" y="130" text-anchor="middle" font-size="56" font-weight="bold">
+    <tspan fill="#f5f1e8">Retro Graphics </tspan><tspan fill="#4dd8e6">Pipeline</tspan>
+  </text>
+  <text x="800" y="170" text-anchor="middle" fill="#f0a832" font-size="20">720p timing -> colour bars -> tile/sprite PPU</text>
+
+  <g>
+    <rect x="60" y="220" width="340" height="280" rx="8" fill="#131f38" stroke="#2a3f66" stroke-width="2"/>
+    <text x="230" y="255" text-anchor="middle" fill="#4dd8e6" font-size="20" font-weight="bold">1. VIDEO TIMING</text>
+    <text x="85" y="295" fill="#8fa3c7" font-size="15">03-hdmi/rtl/video_timing.v</text>
+    <text x="85" y="330" fill="#c9d6ee" font-size="15">pixel clock: 74.25 MHz</text>
+    <text x="85" y="355" fill="#c9d6ee" font-size="15">x: 0..1649   y: 0..749</text>
+    <text x="85" y="380" fill="#7de8a0" font-size="15">de = x&lt;1280 &amp;&amp; y&lt;720</text>
+    <text x="85" y="420" fill="#8fa3c7" font-size="14">H: active 1280, front 110,</text>
+    <text x="85" y="440" fill="#8fa3c7" font-size="14">   sync 40, back 220</text>
+    <text x="85" y="465" fill="#8fa3c7" font-size="14">V: active 720, front 5,</text>
+    <text x="85" y="485" fill="#8fa3c7" font-size="14">   sync 5, back 20</text>
+  </g>
+
+  <g>
+    <rect x="460" y="220" width="340" height="280" rx="8" fill="#131f38" stroke="#2a3f66" stroke-width="2"/>
+    <text x="630" y="255" text-anchor="middle" fill="#4dd8e6" font-size="20" font-weight="bold">2. COLOUR FUNCTION</text>
+    <text x="485" y="295" fill="#8fa3c7" font-size="15">03-hdmi/rtl/colorbars.v</text>
+    <text x="485" y="330" fill="#c9d6ee" font-size="15">BAR = H_ACTIVE / 8 = 160</text>
+    <text x="485" y="355" fill="#c9d6ee" font-size="15">if !de: RGB = 24'h000000</text>
+    <text x="485" y="380" fill="#c9d6ee" font-size="15">else: compare x to constants</text>
+    <text x="485" y="420" fill="#8fa3c7" font-size="14">no framebuffer, no divider:</text>
+    <text x="485" y="442" fill="#8fa3c7" font-size="14">just counters, compares, RGB</text>
+    <g transform="translate(500 462)">
+      <rect x="0" y="0" width="36" height="18" fill="#ffffff"/>
+      <rect x="36" y="0" width="36" height="18" fill="#ffff00"/>
+      <rect x="72" y="0" width="36" height="18" fill="#00ffff"/>
+      <rect x="108" y="0" width="36" height="18" fill="#00ff00"/>
+      <rect x="144" y="0" width="36" height="18" fill="#ff00ff"/>
+      <rect x="180" y="0" width="36" height="18" fill="#ff0000"/>
+      <rect x="216" y="0" width="36" height="18" fill="#0000ff"/>
+      <rect x="252" y="0" width="36" height="18" fill="#000000" stroke="#2a3f66"/>
+    </g>
+  </g>
+
+  <g>
+    <rect x="860" y="220" width="340" height="280" rx="8" fill="#131f38" stroke="#2a3f66" stroke-width="2"/>
+    <text x="1030" y="255" text-anchor="middle" fill="#4dd8e6" font-size="20" font-weight="bold">3. HDMI OUT</text>
+    <text x="885" y="295" fill="#8fa3c7" font-size="15">board step: DVI over HDMI</text>
+    <text x="885" y="330" fill="#c9d6ee" font-size="15">27 MHz crystal -> rPLL</text>
+    <text x="885" y="355" fill="#c9d6ee" font-size="15">371.25 MHz serial clock</text>
+    <text x="885" y="380" fill="#c9d6ee" font-size="15">CLKDIV /5 -> 74.25 MHz</text>
+    <text x="885" y="420" fill="#c9d6ee" font-size="15">TMDS encoder x3 -> OSER10</text>
+    <text x="885" y="445" fill="#8fa3c7" font-size="14">ELVDS_OBUF differential pairs</text>
+    <text x="885" y="467" fill="#8fa3c7" font-size="14">HDMI pins 33-40 on Tang Nano 20K</text>
+  </g>
+
+  <g>
+    <rect x="1260" y="220" width="280" height="280" rx="8" fill="#131f38" stroke="#2a3f66" stroke-width="2"/>
+    <text x="1400" y="255" text-anchor="middle" fill="#4dd8e6" font-size="20" font-weight="bold">4. PPU TARGET</text>
+    <text x="1285" y="295" fill="#c9d6ee" font-size="15">internal: 320x180</text>
+    <text x="1285" y="320" fill="#c9d6ee" font-size="15">scale: 4x4 pixels</text>
+    <text x="1285" y="345" fill="#c9d6ee" font-size="15">output: 1280x720</text>
+    <text x="1285" y="385" fill="#7de8a0" font-size="15">tiles: 8x8, 4 bpp</text>
+    <text x="1285" y="410" fill="#7de8a0" font-size="15">tilemap: 64x32 x 8b</text>
+    <text x="1285" y="435" fill="#7de8a0" font-size="15">sprites: 32 x 32b</text>
+    <text x="1285" y="472" fill="#8fa3c7" font-size="14">about 82 Kbit of BSRAM</text>
+  </g>
+
+  <line x1="400" y1="360" x2="455" y2="360" stroke="#4dd8e6" stroke-width="3" marker-end="url(#arr)"/>
+  <line x1="800" y1="360" x2="855" y2="360" stroke="#4dd8e6" stroke-width="3" marker-end="url(#arr)"/>
+  <line x1="1200" y1="360" x2="1255" y2="360" stroke="#4dd8e6" stroke-width="3" marker-end="url(#arr)"/>
+
+  <g>
+    <rect x="60" y="560" width="1480" height="250" rx="8" fill="#101a30" stroke="#2a3f66" stroke-width="2"/>
+    <text x="800" y="598" text-anchor="middle" fill="#f0a832" font-size="20" font-weight="bold">EACH PIXEL IS GENERATED AS THE SCAN PASSES</text>
+
+    <rect x="110" y="635" width="180" height="105" rx="8" fill="#131f38" stroke="#2a3f66"/>
+    <text x="200" y="665" text-anchor="middle" fill="#4dd8e6" font-size="17" font-weight="bold">x, y, de</text>
+    <text x="135" y="700" fill="#c9d6ee" font-size="15">from timing</text>
+    <text x="135" y="723" fill="#8fa3c7" font-size="14">start 3 px early</text>
+
+    <rect x="365" y="635" width="200" height="105" rx="8" fill="#131f38" stroke="#2a3f66"/>
+    <text x="465" y="665" text-anchor="middle" fill="#4dd8e6" font-size="17" font-weight="bold">TILEMAP RAM</text>
+    <text x="390" y="700" fill="#c9d6ee" font-size="15">64x32 entries</text>
+    <text x="390" y="723" fill="#8fa3c7" font-size="14">x_int[8:3], y_int[7:3]</text>
+
+    <rect x="640" y="635" width="200" height="105" rx="8" fill="#131f38" stroke="#2a3f66"/>
+    <text x="740" y="665" text-anchor="middle" fill="#4dd8e6" font-size="17" font-weight="bold">TILE ROM</text>
+    <text x="665" y="700" fill="#c9d6ee" font-size="15">256 tiles, 8x8</text>
+    <text x="665" y="723" fill="#8fa3c7" font-size="14">texel x[2:0], y[2:0]</text>
+
+    <rect x="915" y="635" width="200" height="105" rx="8" fill="#131f38" stroke="#2a3f66"/>
+    <text x="1015" y="665" text-anchor="middle" fill="#4dd8e6" font-size="17" font-weight="bold">SPRITE MUX</text>
+    <text x="940" y="700" fill="#c9d6ee" font-size="15">line buffer</text>
+    <text x="940" y="723" fill="#8fa3c7" font-size="14">non-transparent wins</text>
+
+    <rect x="1190" y="635" width="200" height="105" rx="8" fill="#131f38" stroke="#2a3f66"/>
+    <text x="1290" y="665" text-anchor="middle" fill="#4dd8e6" font-size="17" font-weight="bold">PALETTE</text>
+    <text x="1215" y="700" fill="#c9d6ee" font-size="15">16 x 24-bit RGB</text>
+    <text x="1215" y="723" fill="#8fa3c7" font-size="14">to TMDS pipeline</text>
+
+    <line x1="290" y1="687" x2="360" y2="687" stroke="#f0a832" stroke-width="3" marker-end="url(#arrO)"/>
+    <line x1="565" y1="687" x2="635" y2="687" stroke="#f0a832" stroke-width="3" marker-end="url(#arrO)"/>
+    <line x1="840" y1="687" x2="910" y2="687" stroke="#f0a832" stroke-width="3" marker-end="url(#arrO)"/>
+    <line x1="1115" y1="687" x2="1185" y2="687" stroke="#f0a832" stroke-width="3" marker-end="url(#arrO)"/>
+
+    <text x="800" y="782" text-anchor="middle" fill="#8fa3c7" font-size="15">synchronous BSRAM: each read costs 1 clock, so tilemap, tile ROM, sprite, and palette lookups pipeline</text>
+  </g>
+
+  <text x="800" y="855" text-anchor="middle" fill="#8fa3c7" font-size="16" letter-spacing="4">NO FRAMEBUFFER &#183; 720P TIMING &#183; 8X8 TILES &#183; 4X SCALE &#183; PIXEL PIPELINE</text>
+</svg>
