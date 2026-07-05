@@ -12,7 +12,7 @@ references below light up in the docs:
 
 ## Accuracy notes — read before regenerating
 
-The SVG tutorial openers in this folder use the implemented/planned values
+The SVG tutorial openers in this folder use the implemented values
 below. Keep these constraints if regenerating PNG artwork from the project
 concept, otherwise the art will contradict the RTL:
 

@@ -1,4 +1,4 @@
-# Stage 04 — Tile/sprite PPU (planned)
+# Stage 04 — Tile/sprite PPU
 
 **Prerequisite: stage 03 colour bars on a real monitor.**
 

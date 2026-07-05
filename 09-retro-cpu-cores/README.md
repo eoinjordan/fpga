@@ -1,4 +1,4 @@
-# Stage 09 — Retro CPU cores for the game-engine builder (planned)
+# Stage 09 — Retro CPU cores for the game-engine builder
 
 **Prerequisite: stage 06.** After integrating PicoRV32 you know the
 drill: CPU core + bus + RAM + memory-mapped peripherals. A retro CPU is

@@ -1,4 +1,4 @@
-# Stage 05 — Input and audio (planned)
+# Stage 05 — Input and audio
 
 **Prerequisite: stage 04 sprites moving on screen.**
 

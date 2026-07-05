@@ -1,11 +1,11 @@
-# Stage 08 — Zephyr board port + SemNPU driver (templates ready)
+# Stage 08 — Zephyr board port + SemNPU driver
 
 **Prerequisite: stage 06 running on the board with a real UART, timer,
 and interrupt controller.** Zephyr is not "bare metal but bigger" — it
 schedules threads, so the hardware must provide a system timer and an
 interrupt controller before `hello_world` can even boot.
 
-This directory is a complete **out-of-tree Zephyr module skeleton**. The
+This directory is a complete **out-of-tree Zephyr module**. The
 structure is final; the `TODO(csr)` addresses get filled in from your
 generated SoC.
 
