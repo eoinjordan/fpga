@@ -79,6 +79,16 @@ vendor/     Sipeed's official TangNano-20K-example repo (reference only,
             not tracked by this repo — reclone with tools/clone-vendor.ps1)
 ```
 
+## Boards
+
+The primary target is the Tang Nano 20K; the series RTL is
+vendor-neutral and board glue lives in per-board directories:
+
+| Board | Status | Port files |
+|-------|--------|------------|
+| Tang Nano 20K (Gowin GW2AR-18) | primary; open flow proven | `03-hdmi/constraints/` + Makefiles |
+| Seeed Spartan Edge (Xilinx XC7S15) | in hand; Vivado flow ready | [boards/spartan-edge/](boards/spartan-edge/) |
+
 ## Board reference (Tang Nano 20K)
 
 - FPGA: Gowin GW2AR-LV18QN88 — 20,736 LUT4, 15,552 FF, 828 Kbit BSRAM, 48× 18×18 multipliers

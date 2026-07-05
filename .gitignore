@@ -7,6 +7,11 @@ vendor/
 *.vvp
 *.json
 *.fs
+*.bit
+*.rpt
+vivado*.log
+vivado*.jou
+.Xil/
 build/
 
 # Generated test vectors and firmware
