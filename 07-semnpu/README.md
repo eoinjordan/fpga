@@ -23,6 +23,42 @@ in `rdata` the next cycle.
 | 0x2C | CLEAR | W | zero the DOT8 accumulator |
 | 0x30 | ACC | R | signed 32-bit dot-product accumulator |
 
+## A full inference call, CPU's-eye view
+
+This is exactly what stage 06's firmware does (and what the stage 08
+Zephyr driver wraps in functions):
+
+```mermaid
+sequenceDiagram
+    participant FW as firmware (RV32I)
+    participant BUS as bus
+    participant NPU as semnpu_regs
+    participant D8 as dot8 core
+
+    Note over FW,NPU: bitset similarity
+    FW->>NPU: SW A0..A3 (0x00-0x0C)
+    FW->>NPU: SW B0..B3 (0x10-0x1C)
+    FW->>NPU: LW 0x20
+    NPU-->>FW: popcount(A and B) — combinational, no waiting
+
+    Note over FW,D8: streaming dot product
+    FW->>NPU: SW 0x2C (clear)
+    NPU->>D8: clear pulse
+    loop one pair per SW
+        FW->>NPU: SW 0x28 (a | b<<8)
+        NPU->>D8: in_valid + a, b
+        D8->>D8: acc += a*b
+    end
+    FW->>NPU: LW 0x30
+    NPU-->>FW: signed accumulator
+```
+
+Two register styles on purpose: POPAND/HAMMING are **combinational
+reads** (vectors sit in registers, the answer is always ready) while
+DOT8 is **stateful streaming** (too much data to hold in registers).
+Every accelerator you'll ever meet is built from these two idioms —
+often plus a third, "start + poll done", which arrives with ARGMAX.
+
 The C view (for stage 06 upgrade path / stage 08 driver):
 
 ```c

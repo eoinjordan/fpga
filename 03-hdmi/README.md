@@ -22,6 +22,54 @@ pixel's colour *as the beam passes it*. Every stage after this one is
 
 1650 × 750 × 60 = 74,250,000 — that's where the pixel clock comes from.
 
+## The frame, drawn to (rough) scale
+
+The screen you see is just the top-left window of a bigger scanned
+rectangle. The beam "flies back" during the porches; syncs tell the
+monitor where lines and frames start:
+
+```
+        x=0            x=1280   x=1390 x=1430    x=1650
+  y=0    +---------------+--------+======+--------+
+         |               |        ‖      ‖        |
+         |  ACTIVE VIDEO |  front ‖HSYNC ‖  back  |
+         |   1280 x 720  |  porch ‖      ‖  porch |
+         |   de = 1      |        ‖      ‖        |
+         |  (your pixels)|        ‖      ‖        |
+  y=720  +---------------+        ‖      ‖        |
+         |   front porch (5 lines)‖      ‖        |
+  y=725  |=========== VSYNC (5 lines) ============|
+  y=730  |   back porch (20 lines)‖      ‖        |
+  y=750  +----------------------------------------+
+                                  <-40px->
+```
+
+And one scanline as a waveform (what a scope on the wire would show):
+
+```
+x:      0 ................. 1280 ..... 1390 .. 1430 ...... 1649
+de      /‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾\_____________________________
+rgb     <   your colours     ><         black             >
+hsync   ______________________________/‾‾‾‾‾‾\_____________
+```
+
+`video_timing.v` is nothing but two counters generating exactly this
+picture; `tb_video_timing.v` checks the areas add up (de high exactly
+1280×720 times per frame, 750 hsync pulses, 1 vsync).
+
+## Where each colour bar comes from
+
+`colorbars.v` is a pure function of x — this is the "no framebuffer"
+idea at its smallest:
+
+```mermaid
+flowchart LR
+    VT["video_timing<br/>two counters"] -->|"x, y, de"| CB["colorbars<br/>bar = x / 160"]
+    CB -->|"r, g, b"| ENC["TMDS encoder ×3<br/>(board step)"]
+    ENC --> SER["OSER10 serializers<br/>371.25 MHz DDR"]
+    SER --> CONN["HDMI connector<br/>pins 33-40"]
+```
+
 ## What's here
 
 | File | Status |

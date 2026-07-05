@@ -14,6 +14,22 @@ python/gen_vectors.py          Verilog testbench
  (inputs + expected outputs)      exit non-zero on any mismatch
 ```
 
+```mermaid
+flowchart LR
+    GEN["gen_vectors.py<br/>(fixed seed = reproducible)"]
+    VEC["vectors/*.hex<br/>inputs"]
+    EXP["vectors/expected_*.hex<br/>golden outputs"]
+    TB["testbench<br/>$readmemh both"]
+    DUT["DUT (your RTL)"]
+    CMP{"bit-for-bit<br/>equal?"}
+
+    GEN --> VEC & EXP
+    VEC --> TB --> DUT --> CMP
+    EXP --> CMP
+    CMP -->|yes, all cases| PASS(["PASS, exit 0"])
+    CMP -->|any mismatch| FAIL(["FAIL, $fatal, make stops"])
+```
+
 Python computes the truth. Hardware must agree with it, bit for bit,
 on hundreds of random cases plus directed edge cases. If you ever change
 the RTL, `make` re-proves it. This is exactly how you'll validate the
@@ -33,6 +49,19 @@ int8 blocks against Edge Impulse feature data later.
 It accumulates one `a×b` pair per clock — `clear`, stream N pairs with
 `in_valid`, read the 32-bit accumulator. Stage 07 wraps exactly this
 interface in memory-mapped registers for the CPU.
+
+The streaming protocol on a waveform — note the accumulator trails the
+inputs by one clock (it's a register; see stage 01's lesson):
+
+```
+clk       __/‾‾\__/‾‾\__/‾‾\__/‾‾\__/‾‾\__/‾‾\__/‾‾\__
+clear     __/‾‾‾‾‾\____________________________________
+in_valid  _________/‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾\__________
+a         =========X=  3  X= -2  X=  5  X=============
+b         =========X=  4  X=  6  X=  2  X=============
+acc       =  ?  == 0 === 0 == 12 === 0 === 10 == 10 ==
+                                ^3*4  ^+(-2*6)  ^+5*2
+```
 
 ## Run it
 

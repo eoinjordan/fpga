@@ -20,6 +20,35 @@
 `blinky.v` is also your **first board target** when the Tang Nano arrives
 (stage 03's Makefile synthesizes it — see `03-hdmi/README.md`).
 
+## What the counter looks like on a waveform
+
+This is what you'll see in GTKWave after `make waves` — learn to read it
+here first. Time flows right; every rising clock edge (↑) is when
+registers act:
+
+```
+clk    __/‾‾\__/‾‾\__/‾‾\__/‾‾\__/‾‾\__/‾‾\__/‾‾\__/‾‾\__
+          ↑     ↑     ↑     ↑     ↑     ↑     ↑     ↑
+rst    ‾‾‾‾‾‾\_______________________________________
+en     ______________/‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾\_____________
+count  = 0 == 0 == 0 == 0 =X= 1 =X= 2 == 3 == 3 == 3 =
+                            ^                 ^
+                 first en=1 edge         en=0: holds
+```
+
+Three things to internalize from this picture:
+
+1. `count` changes **only at clock edges** — between edges it is rock
+   solid. That's what "synchronous" means.
+2. `count` changes **one edge after** the inputs that caused it. The
+   register samples `en` at the edge, the new value appears after it.
+3. `rst` and `en` do nothing between edges. Only their value *at* the
+   edge matters (that's also why testbenches sample with `@(posedge clk); #1`).
+
+Keep [docs/verilog-cheatsheet.md](../docs/verilog-cheatsheet.md) open
+while you work — the "what each construct becomes" table is the map from
+code to silicon.
+
 ## Run it
 
 ```powershell

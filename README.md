@@ -9,6 +9,11 @@ the open-source toolchain, so you can make real progress before the board
 arrives. Board stages (03+) use verified pin constraints from Sipeed's
 official examples in `vendor/`.
 
+Start with [docs/architecture.md](docs/architecture.md) — the one-page
+map of the machine all nine stages build — and keep
+[docs/verilog-cheatsheet.md](docs/verilog-cheatsheet.md) open while
+coding.
+
 ## The roadmap
 
 | Stage | Directory | Needs board? | What you build |
@@ -29,6 +34,20 @@ a `make` flow. Do them in order — every stage reuses modules from the one
 before it. Stages 01, 02, 03 (sim), 06, and 07 are fully runnable today
 with no hardware; try `cd 06-riscv-soc && make` to watch a RISC-V CPU
 boot and drive the inference coprocessor in simulation.
+
+Dependencies between stages — the two tracks are parallel after 03:
+
+```mermaid
+flowchart LR
+    S00["00 env"] --> S01["01 HDL"] --> S02["02 golden<br/>models"] --> S03["03 HDMI"]
+    S03 --> S04["04 PPU"] --> S05["05 input<br/>+ audio"]
+    S02 --> S06["06 RISC-V<br/>SoC"] --> S07["07 SemNPU"]
+    S06 --> S08["08 Zephyr"]
+    S06 --> S09["09 retro<br/>CPUs"]
+    S05 --> CON(["the console"])
+    S07 --> CON
+    S09 -.-> CON
+```
 
 ## Quick start
 

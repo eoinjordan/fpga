@@ -44,6 +44,30 @@ include/semnpu.h                        the API applications call
 app/                                    sample: prints NPU results to the Zephyr shell
 ```
 
+## How a register address travels from RTL to your app
+
+The whole point of devicetree, in one picture — nothing between the
+`.dts` and the application hardcodes `0x80001000`:
+
+```mermaid
+flowchart TD
+    RTL["semnpu_regs.v<br/>wired at 0x8000_1000 in the SoC"]
+    DTS["tangnano20k_semrv.dts<br/>semnpu0: semnpu@80001000<br/>compatible = eoin,semnpu"]
+    BIND["eoin,semnpu.yaml<br/>binding: the schema for that node"]
+    GEN["west build: devicetree compiled<br/>to C macros at build time"]
+    DRV["semnpu.c<br/>DT_INST_REG_ADDR(0) → 0x80001000"]
+    APP["main.c<br/>DEVICE_DT_GET(DT_NODELABEL(semnpu0))"]
+
+    RTL -.->|"must match by hand<br/>(the ONE manual link)"| DTS
+    BIND -->|validates| DTS
+    DTS --> GEN --> DRV --> APP
+```
+
+Change the NPU's base address? Edit the SoC wiring and the one `reg`
+line in the `.dts` — driver and app rebuild correctly, untouched. That
+is the entire value proposition of the devicetree model, and why every
+serious RTOS/OS adopted it.
+
 ## Reading order (this is the lesson)
 
 1. `eoin,semnpu.yaml` — a binding is a schema: "anything compatible with

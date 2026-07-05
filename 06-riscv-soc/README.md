@@ -26,6 +26,45 @@ firmware is smaller than the 4KB RAM.)
 | [firmware/build_firmware.py](firmware/build_firmware.py) | RV32I **encoded by hand in Python** — no gcc needed |
 | [tb/tb_soc.v](tb/tb_soc.v) | boots the SoC, checks every observable result |
 
+## Block diagram
+
+```mermaid
+flowchart LR
+    subgraph SOC["simple_soc.v"]
+        CPU["picorv32<br/>RV32I"]
+        DEC{"address<br/>decode"}
+        RAM["4KB RAM<br/>firmware.hex"]
+        MMIO["MMIO regs<br/>uart / report / done"]
+        NPU["semnpu_regs<br/>(stage 07)"]
+    end
+    TB["tb_soc.v<br/>captures + checks"]
+
+    CPU <-->|"mem_valid / ready<br/>addr, wdata, wstrb, rdata"| DEC
+    DEC <-->|"0x0000_0xxx"| RAM
+    DEC <-->|"0x8000_0xxx"| MMIO
+    DEC <-->|"0x8000_1xxx"| NPU
+    MMIO -->|"uart_wr, report_wr, done"| TB
+```
+
+## The bus protocol, one transaction
+
+PicoRV32's native interface is beautifully simple, and our SoC answers
+everything in one cycle. This is the timing for a single `SW` (store):
+
+```
+clk        __/‾‾\__/‾‾\__/‾‾\__/‾‾\__
+mem_valid  ______/‾‾‾‾‾‾‾‾‾‾‾\_______     CPU: "I want the bus"
+mem_addr   ======X 0x80001028 X======
+mem_wdata  ======X 0x0000ce64 X======
+mem_wstrb  ======X   4'b1111  X======     all 4 bytes = word write
+mem_ready  ____________/‾‾‾‾‾\_______     SoC: "done" (1 cycle later)
+```
+
+`valid` stays high until the SoC raises `ready` for one cycle; for reads
+(`wstrb == 0`) the SoC must present `mem_rdata` during that ready cycle.
+Every peripheral you ever add to this machine — PPU, APU, pad — just
+needs to play this one handshake.
+
 ## Memory map
 
 | Address | What |
