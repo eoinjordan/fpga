@@ -11,6 +11,9 @@
 //   0x30       DOT8 accumulator        (read)
 //
 // sel must pulse exactly one clock per bus transaction.
+// Registers are 32-bit word-access only: any nonzero wstrb is treated
+// as a full-word write (no byte lanes). Firmware and drivers must use
+// aligned 32-bit loads/stores.
 `default_nettype none
 `timescale 1ns/1ps
 
@@ -37,7 +40,7 @@ module semnpu_regs (
     wire signed [31:0] dot_acc;
 
     dot8 u_dot8 (
-        .clk(clk), .clear(dot_clear), .in_valid(dot_valid),
+        .clk(clk), .rst(rst), .clear(dot_clear), .in_valid(dot_valid),
         .a(dot_a), .b(dot_b), .acc(dot_acc)
     );
 

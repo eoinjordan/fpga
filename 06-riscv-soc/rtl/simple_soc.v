@@ -62,6 +62,10 @@ module simple_soc #(
 
     // ---- address decode (one-cycle-ready bus) --------------------------
     wire access   = mem_valid && !mem_ready;
+    // NOTE: the RAM decode is deliberately loose — everything in
+    // 0x0xxx_xxxx aliases onto the 4KB RAM via mem_addr[11:2]. Fine for
+    // a toy SoC where firmware stays in the first 4KB; tighten this to
+    // (mem_addr < RAM_BYTES) before adding more memories to this range.
     wire sel_ram  = access && (mem_addr[31:28] == 4'h0);
     wire sel_mmio = access && (mem_addr[31:12] == 20'h80000);
     wire sel_npu  = access && (mem_addr[31:12] == 20'h80001);

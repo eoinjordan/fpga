@@ -1,4 +1,5 @@
 // SEM_DOT8: streaming signed int8 multiply-accumulate.
+//   rst=1                          -> acc = 0 (deterministic power-up)
 //   clear=1 for one clock          -> acc = 0
 //   in_valid=1 with a, b           -> acc += a * b   (one pair per clock)
 //   read acc when the stream ends
@@ -8,6 +9,7 @@
 
 module dot8 (
     input  wire               clk,
+    input  wire               rst,
     input  wire               clear,
     input  wire               in_valid,
     input  wire signed  [7:0] a,
@@ -16,7 +18,7 @@ module dot8 (
 );
 
     always @(posedge clk) begin
-        if (clear)
+        if (rst || clear)
             acc <= 32'sd0;
         else if (in_valid)
             acc <= acc + (a * b);

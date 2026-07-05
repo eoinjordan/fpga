@@ -1,7 +1,9 @@
+# Zephyr module manifest. Per Zephyr's module docs, all paths here are
+# relative to the MODULE ROOT (08-zephyr-port/), not to this file.
 name: semboy20k
 build:
   settings:
-    board_root: ..
-    dts_root: ..
-  cmake: ../drivers
-  kconfig: ../drivers/Kconfig
+    board_root: .
+    dts_root: .
+  cmake: drivers
+  kconfig: drivers/Kconfig

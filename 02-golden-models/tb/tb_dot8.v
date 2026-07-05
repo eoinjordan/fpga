@@ -9,13 +9,14 @@ module tb_dot8;
     localparam N_TESTS = 100;
 
     reg               clk = 0;
+    reg               rst = 1;
     reg               clear = 0;
     reg               in_valid = 0;
     reg  signed [7:0] a, b;
     wire signed [31:0] acc;
 
     dot8 dut (
-        .clk(clk), .clear(clear), .in_valid(in_valid),
+        .clk(clk), .rst(rst), .clear(clear), .in_valid(in_valid),
         .a(a), .b(b), .acc(acc)
     );
 
@@ -34,6 +35,14 @@ module tb_dot8;
         $readmemh("vectors/dot8_a.hex", vec_a);
         $readmemh("vectors/dot8_b.hex", vec_b);
         $readmemh("vectors/expected_dot8.hex", expected);
+
+        repeat (2) @(negedge clk);
+        rst = 0;
+        // rst must leave the accumulator at exactly 0, not X
+        if (acc !== 32'sd0) begin
+            $display("FAIL: acc not zero after reset (acc=%0d)", acc);
+            errors = errors + 1;
+        end
 
         for (t = 0; t < N_TESTS; t = t + 1) begin
             @(negedge clk) clear = 1; in_valid = 0;

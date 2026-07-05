@@ -9,6 +9,7 @@
 
 #include <zephyr/device.h>
 #include <zephyr/sys/sys_io.h>
+#include <zephyr/toolchain.h>    /* ARG_UNUSED */
 #include "semnpu.h"
 
 #define REG_A(i)     (0x00 + 4 * (i))

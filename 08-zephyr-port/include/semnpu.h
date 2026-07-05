@@ -2,6 +2,7 @@
 #ifndef SEMNPU_H_
 #define SEMNPU_H_
 
+#include <stddef.h>
 #include <stdint.h>
 #include <zephyr/device.h>
 

@@ -1,0 +1,23 @@
+name: simulation regression
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  sim:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install Icarus Verilog
+        run: sudo apt-get update && sudo apt-get install -y --no-install-recommends iverilog
+
+      - name: Python generators run standalone
+        run: |
+          python3 02-golden-models/python/gen_vectors.py
+          python3 06-riscv-soc/firmware/build_firmware.py
+
+      - name: Full simulation regression
+        run: make sim PYTHON=python3

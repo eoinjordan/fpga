@@ -10,24 +10,24 @@ arrives. Board stages (03+) use verified pin constraints from Sipeed's
 official examples in `vendor/`.
 
 Start with [docs/architecture.md](docs/architecture.md) — the one-page
-map of the machine all nine stages build — and keep
+map of the machine all ten stages build — and keep
 [docs/verilog-cheatsheet.md](docs/verilog-cheatsheet.md) open while
 coding.
 
 ## The roadmap
 
-| Stage | Directory | Needs board? | What you build |
-|-------|-----------|--------------|----------------|
-| 00 | [docs/00-dev-environment.md](docs/00-dev-environment.md) | No | Toolchain: simulator, synthesis, waveform viewer |
-| 01 | [01-hdl-basics/](01-hdl-basics/) | No | Counters, blinky, your first testbenches |
-| 02 | [02-golden-models/](02-golden-models/) | No | SemNPU building blocks: popcount, Hamming, int8 dot product — each verified against a Python golden model |
-| 03 | [03-hdmi/](03-hdmi/) | Yes (sim for timing) | HDMI/DVI output: 720p colour bars, video timing generator |
-| 04 | [04-tilemap-sprites/](04-tilemap-sprites/) | Yes | Tile/sprite PPU: tilemap, palette, sprite overlay |
-| 05 | [05-input-audio/](05-input-audio/) | Yes | Buttons/controller input, square-wave audio via MAX98357A |
-| 06 | [06-riscv-soc/](06-riscv-soc/) | No (sim works today) | **SemRV**: PicoRV32 SoC running hand-assembled RV32I firmware — boots, prints over UART, drives the NPU |
-| 07 | [07-semnpu/](07-semnpu/) | No (sim works today) | The SemNPU coprocessor register file: POPAND, HAMMING, DOT8 — already integrated with stage 06's CPU |
-| 08 | [08-zephyr-port/](08-zephyr-port/) | Yes | Zephyr board port: devicetree, `eoin,semnpu` binding, driver, sample app (out-of-tree module skeleton ready) |
-| 09 | [09-retro-cpu-cores/](09-retro-cpu-cores/) | Yes | Pluggable retro CPUs (65C816 / ARM7TDMI / SM83) for the GB-Studio-like engine builder |
+| Stage | Directory | Status | Needs board? | What you build |
+|-------|-----------|--------|--------------|----------------|
+| 00 | [docs/00-dev-environment.md](docs/00-dev-environment.md) | implemented | No | Toolchain: simulator, synthesis, waveform viewer |
+| 01 | [01-hdl-basics/](01-hdl-basics/) | implemented | No | Counters, blinky, your first testbenches |
+| 02 | [02-golden-models/](02-golden-models/) | implemented | No | SemNPU building blocks: popcount, Hamming, int8 dot product — each verified against a Python golden model |
+| 03 | [03-hdmi/](03-hdmi/) | partial | Yes (sim for timing) | HDMI/DVI **timing core**: 720p timing generator + colour-bar pixel generator, sim-proven; blinky board smoke-test bitstream; TMDS/PLL serializer top is the next hardware step |
+| 04 | [04-tilemap-sprites/](04-tilemap-sprites/) | planned | Yes | Tile/sprite PPU: tilemap, palette, sprite overlay |
+| 05 | [05-input-audio/](05-input-audio/) | planned | Yes | Buttons/controller input, square-wave audio via MAX98357A |
+| 06 | [06-riscv-soc/](06-riscv-soc/) | implemented (sim) | No | **SemRV**: PicoRV32 SoC running hand-assembled RV32I firmware — boots, prints over UART, drives the NPU |
+| 07 | [07-semnpu/](07-semnpu/) | implemented (sim) | No | The SemNPU coprocessor register file: POPAND, HAMMING, DOT8 — integrated into the stage 06 SoC |
+| 08 | [08-zephyr-port/](08-zephyr-port/) | skeleton | Yes | Zephyr board port: devicetree, `eoin,semnpu` binding, driver, sample app (out-of-tree module) |
+| 09 | [09-retro-cpu-cores/](09-retro-cpu-cores/) | planned | Yes | Pluggable retro CPUs (65C816 / ARM7TDMI / SM83) for the GB-Studio-like engine builder |
 
 Each stage directory has its own README with goals, theory, exercises, and
 a `make` flow. Do them in order — every stage reuses modules from the one
@@ -86,8 +86,19 @@ vendor-neutral and board glue lives in per-board directories:
 
 | Board | Status | Port files |
 |-------|--------|------------|
-| Tang Nano 20K (Gowin GW2AR-18) | primary; open flow proven | `03-hdmi/constraints/` + Makefiles |
-| Seeed Spartan Edge (Xilinx XC7S15) | in hand; Vivado flow ready | [boards/spartan-edge/](boards/spartan-edge/) |
+| Tang Nano 20K (Gowin GW2AR-18) | primary; open-flow synthesis path with a blinky smoke-test bitstream (unflashed — board in transit); vendor-flow fallback for PLL/DVI/SDRAM IP | `03-hdmi/constraints/` + Makefiles |
+| Seeed Spartan Edge (Xilinx XC7S15) | in hand; Vivado batch flow ready (unrun — Vivado not yet installed) | [boards/spartan-edge/](boards/spartan-edge/) |
+
+## Scope and non-goals
+
+This is a teaching series, sized for hobby FPGAs. In scope: a fantasy
+console of my own design, a small RISC-V SoC, a tiny semantic/inference
+coprocessor, a Zephyr port, and retro *CPU cores* as pluggable brains.
+Explicitly out of scope: cycle-accurate console clones (SNES/GBA don't
+fit these chips anyway), Linux-capable SoCs, a general-purpose NPU with
+a compiler stack, and any commercial ROMs, BIOS images, or proprietary
+console assets — none are included and none will be. Licensing policy
+for vendored code lives in [THIRD_PARTY.md](THIRD_PARTY.md).
 
 ## Board reference (Tang Nano 20K)
 
