@@ -1,0 +1,33 @@
+// Tang Nano 20K physical constraints — GW2AR-LV18QN88C8/I7
+// Pins verified against Sipeed's official examples (vendor/TangNano-20K-example).
+// Only uncomment the ports your top module actually has.
+
+// 27 MHz crystal
+IO_LOC "clk" 4;
+IO_PORT "clk" IO_TYPE=LVCMOS33 PULL_MODE=UP BANK_VCCIO=3.3;
+
+// LEDs (active-low)
+IO_LOC "led_n" 15;
+IO_PORT "led_n" IO_TYPE=LVCMOS33 PULL_MODE=UP DRIVE=8 BANK_VCCIO=3.3;
+
+// Buttons (pull-down: pressed = 1)
+IO_LOC "btn_s1" 88;
+IO_PORT "btn_s1" IO_TYPE=LVCMOS33 PULL_MODE=DOWN BANK_VCCIO=3.3;
+//IO_LOC "btn_s2" 87;
+//IO_PORT "btn_s2" IO_TYPE=LVCMOS33 PULL_MODE=DOWN BANK_VCCIO=3.3;
+
+// UART through the BL616 debugger
+//IO_LOC "uart_tx" 69;
+//IO_PORT "uart_tx" IO_TYPE=LVCMOS33 PULL_MODE=UP DRIVE=8 BANK_VCCIO=3.3;
+//IO_LOC "uart_rx" 70;
+//IO_PORT "uart_rx" IO_TYPE=LVCMOS33 PULL_MODE=UP BANK_VCCIO=3.3;
+
+// HDMI (differential pairs — constrain the _p port with both pins)
+//IO_LOC "tmds_clk_p" 33,34;
+//IO_PORT "tmds_clk_p" IO_TYPE=LVDS25 PULL_MODE=NONE DRIVE=3.5 BANK_VCCIO=3.3;
+//IO_LOC "tmds_d_p[0]" 35,36;
+//IO_PORT "tmds_d_p[0]" IO_TYPE=LVDS25 PULL_MODE=NONE DRIVE=3.5 BANK_VCCIO=3.3;
+//IO_LOC "tmds_d_p[1]" 37,38;
+//IO_PORT "tmds_d_p[1]" IO_TYPE=LVDS25 PULL_MODE=NONE DRIVE=3.5 BANK_VCCIO=3.3;
+//IO_LOC "tmds_d_p[2]" 39,40;
+//IO_PORT "tmds_d_p[2]" IO_TYPE=LVDS25 PULL_MODE=NONE DRIVE=3.5 BANK_VCCIO=3.3;

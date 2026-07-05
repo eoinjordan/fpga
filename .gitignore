@@ -1,0 +1,19 @@
+# Vendor reference repos (recloned via tools/clone-vendor.ps1)
+vendor/
+
+# Simulation outputs
+*.vcd
+*.fst
+*.vvp
+build/
+
+# Generated test vectors
+02-golden-models/vectors/
+
+# Gowin EDA project junk
+impl/
+*.gprj.user
+
+# Python
+__pycache__/
+*.pyc
