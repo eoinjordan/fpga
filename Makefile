@@ -1,7 +1,7 @@
 # Top-level targets. Run `. .\tools\activate.ps1` first (Windows) or
 # have iverilog/vvp/python on PATH (CI/Linux).
 
-SIM_STAGES = 01-hdl-basics 02-golden-models 03-hdmi 06-riscv-soc
+SIM_STAGES = 01-hdl-basics 02-golden-models 03-hdmi 04-tilemap-sprites 05-input-audio 06-riscv-soc 07-semnpu 09-retro-cpu-cores
 
 # run every simulation testbench in the repo (the full regression)
 sim:

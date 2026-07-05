@@ -65,8 +65,8 @@ idea at its smallest:
 ```mermaid
 flowchart LR
     VT["video_timing<br/>two counters"] -->|"x, y, de"| CB["colorbars<br/>bar = x / 160"]
-    CB -->|"r, g, b"| ENC["TMDS encoder ×3<br/>(board step)"]
-    ENC --> SER["OSER10 serializers<br/>371.25 MHz DDR"]
+    CB -->|"r, g, b"| ENC["TMDS encoder ×3"]
+    ENC --> SER["OSER10 serializers<br/>371.25 MHz DDR<br/>(board primitive)"]
     SER --> CONN["HDMI connector<br/>pins 33-40"]
 ```
 
@@ -76,13 +76,16 @@ flowchart LR
 |------|--------|
 | [rtl/video_timing.v](rtl/video_timing.v) | sim-proven timing generator |
 | [rtl/colorbars.v](rtl/colorbars.v) | 8-bar SMPTE-ish pattern from (x, y) |
+| [rtl/tmds_encoder.v](rtl/tmds_encoder.v) | 8b/10b TMDS video/control encoder |
+| [rtl/hdmi_colorbars.v](rtl/hdmi_colorbars.v) | timing + colour bars + three TMDS lanes |
 | [tb/tb_video_timing.v](tb/tb_video_timing.v) | counts de/hsync/vsync over a whole frame |
+| [tb/tb_tmds_encoder.v](tb/tb_tmds_encoder.v) | checks TMDS control tokens and data symbols |
 | [constraints/tangnano20k.cst](constraints/tangnano20k.cst) | verified pins: clock, LEDs, buttons, HDMI |
 
 ## Run the sim (today, no board)
 
 ```powershell
-make        # simulates one full 720p frame and checks every count
+make        # full 720p timing test + TMDS encoder checks
 ```
 
 ## On the board (when it arrives)
@@ -94,14 +97,12 @@ make blinky.fs                              # yosys -> nextpnr -> gowin_pack
 openFPGALoader -b tangnano20k blinky.fs     # LED blinks at 1 Hz
 ```
 
-**Then: HDMI.** The missing pieces are Gowin primitives that can't be
-simulated with plain iverilog:
+**Then: HDMI.** The remaining hardware-specific pieces are Gowin
+primitives that can't be simulated with plain iverilog:
 
 1. an `rPLL` making 371.25 MHz from the 27 MHz crystal, plus `CLKDIV` /5
    for the 74.25 MHz pixel clock;
-2. a TMDS 8b/10b encoder per channel (~60 lines, well documented in the
-   DVI 1.0 spec — good exercise);
-3. `OSER10` DDR serializers pushing 10 bits per pixel clock out the
+2. `OSER10` DDR serializers pushing 10 bits per pixel clock out the
    differential pins, plus `ELVDS_OBUF` output buffers.
 
 Sipeed's working reference is `vendor/TangNano-20K-example/hdmi/` — it

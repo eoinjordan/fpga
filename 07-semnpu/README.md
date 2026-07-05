@@ -11,6 +11,10 @@ against the Python golden model. Run it from `06-riscv-soc/` with `make`.
 `sel` pulses one clock per access, `wstrb != 0` means write, reads land
 in `rdata` the next cycle.
 
+[tb/tb_semnpu_regs.v](tb/tb_semnpu_regs.v) directly verifies the register
+map with the same popand=51, hamming=36, dot8=-5063 fixture used by the
+stage 06 firmware. Run it with `make` from this directory.
+
 ## Register map (base 0x8000_1000 on the SemRV bus)
 
 | Offset | Name | Access | Function |

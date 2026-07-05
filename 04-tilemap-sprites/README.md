@@ -52,17 +52,16 @@ read costing one clock, so the lookups **pipeline** — the tilemap read
 for pixel x+2 happens while the tile ROM read for x+1 and the palette
 read for x are in flight. Start the pipeline 3 pixels before de.
 
-## Build order
+## What's here
 
-1. `tilemap_renderer.v` — background only, no scroll. Golden model: a
-   Python script that renders the same tilemap to a PNG; testbench dumps
-   the DUT's frame to a file and Python diffs them pixel-for-pixel.
-   (The stage 02 workflow, applied to images.)
-2. Scroll registers (scroll_x, scroll_y).
-3. Sprite overlay: per scanline, scan the sprite table during hblank into
-   a line buffer, then mux sprite pixels over background during scanout.
-4. A Python `png2tiles.py` asset pipeline so you can draw tiles in any
-   editor and `$readmemh` them in.
+| File | What it is |
+|------|------------|
+| [rtl/tile_sprite_ppu.v](rtl/tile_sprite_ppu.v) | 320×180 pixel generator with scroll inputs, tile-grid background, palette, and 32 deterministic sprite slots |
+| [tb/tb_tile_sprite_ppu.v](tb/tb_tile_sprite_ppu.v) | self-checking pixel tests for background, tile edges, sprite priority, and blanking |
+| [Makefile](Makefile) | Icarus build/run target used by top-level `make sim` |
 
-Milestone: a scrolling tile background with a joystick-free bouncing
-sprite — the "it's actually a console now" moment.
+Run it:
+
+```powershell
+make
+```

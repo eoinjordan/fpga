@@ -27,6 +27,23 @@ Note: **GB Studio targets the Game Boy**, so if "GB-Studio-like" is
 literal, the SM83 track gives you binary-level familiarity — GBDK-2020
 (a maintained C toolchain) can compile game logic for your machine.
 
+## Implemented socket
+
+The checked-in RTL implements the common integration point for the retro
+tracks:
+
+| File | What it is |
+|------|------------|
+| [rtl/cpu_bus_socket.v](rtl/cpu_bus_socket.v) | byte-wide CPU bus to 32-bit SemBoy MMIO valid/ready adapter |
+| [tb/tb_cpu_bus_socket.v](tb/tb_cpu_bus_socket.v) | checks byte-lane write strobes, aligned MMIO addresses, and read-byte extraction |
+| [Makefile](Makefile) | Icarus regression used by top-level `make sim` |
+
+Run it:
+
+```powershell
+make
+```
+
 ## The three tracks (pick per project, they share everything else)
 
 ### 09a — SNES CPU track (65C816)
@@ -64,13 +81,5 @@ engine spec (fixed):          builder side (per game):
 
 Because stages 04/05/07 hang off a generic bus, the CPU is a socket:
 RISC-V for the modern story, 65C816/ARM7TDMI/SM83 for the retro one.
-Same game assets, same PPU, different brain. That's the unique thing
-this project has that neither MiSTer nor GB Studio does.
-
-## Order of attack
-
-1. 6502 warm-up (a weekend: tiny core, huge documentation culture)
-2. 09b ARM7TDMI — best compiler support, closest to "GBA CPU"
-3. 09a 65C816 — after you've felt banked addressing pain secondhand
-4. Engine spec doc: freeze the register map, version it, build the
-   asset pipeline against it
+Same game assets, same PPU, different brain. The implemented socket is
+the stable hardware contract those cores plug into.

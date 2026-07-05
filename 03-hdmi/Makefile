@@ -7,12 +7,18 @@ FAMILY = GW2A-18C
 BOARD  = tangnano20k
 
 # ---- simulation (no board needed) -----------------------------------
-all: run-tb_video_timing
+all: run-tb_video_timing run-tb_tmds_encoder
 
 run-tb_video_timing: tb_video_timing.vvp
 	$(VVP) $<
 
 tb_video_timing.vvp: tb/tb_video_timing.v rtl/video_timing.v
+	$(IVERILOG) $(FLAGS) -o $@ $^
+
+run-tb_tmds_encoder: tb_tmds_encoder.vvp
+	$(VVP) $<
+
+tb_tmds_encoder.vvp: tb/tb_tmds_encoder.v rtl/tmds_encoder.v
 	$(IVERILOG) $(FLAGS) -o $@ $^
 
 # ---- open-flow bitstream: blinky smoke test (board needed) ----------
@@ -34,4 +40,4 @@ flash: blinky.fs
 clean:
 	rm -f *.vvp *.vcd *.json *.fs
 
-.PHONY: all run-tb_video_timing flash clean
+.PHONY: all run-tb_video_timing run-tb_tmds_encoder flash clean

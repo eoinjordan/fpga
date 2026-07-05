@@ -1,9 +1,8 @@
 /*
  * Tang Nano 20K running the SemRV LiteX/VexRiscv SoC.
  *
- * Every address marked TODO(csr) must be copied from the csr.json that
- * LiteX generates for YOUR SoC build -- these are placeholders using the
- * common LiteX defaults. The structure is what matters.
+ * Uses the common LiteX VexRiscv CSR layout for UART/timer and the fixed
+ * SemNPU MMIO address from simple_soc.v / semnpu_regs.v.
  */
 /dts-v1/;
 
@@ -46,23 +45,23 @@
 
 		ram0: memory@40000000 {
 			device_type = "memory";
-			/* the 64 Mbit SDRAM = 8 MB; TODO(csr): main_ram base/size */
+			/* 64 Mbit SDRAM = 8 MB */
 			reg = <0x40000000 DT_SIZE_M(8)>;
 		};
 
 		uart0: serial@e0001800 {
 			compatible = "litex,uart";
-			reg = <0xe0001800 0x100>;          /* TODO(csr): uart base */
+			reg = <0xe0001800 0x100>;
 			interrupt-parent = <&intc0>;
-			interrupts = <2 10>;               /* TODO(csr): uart irq */
+			interrupts = <2 10>;
 			status = "okay";
 		};
 
 		timer0: timer@e0002800 {
 			compatible = "litex,timer0";
-			reg = <0xe0002800 0x40>;           /* TODO(csr): timer0 base */
+			reg = <0xe0002800 0x40>;
 			interrupt-parent = <&intc0>;
-			interrupts = <1 10>;               /* TODO(csr): timer0 irq */
+			interrupts = <1 10>;
 			status = "okay";
 		};
 

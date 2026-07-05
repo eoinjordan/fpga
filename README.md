@@ -21,19 +21,19 @@ coding.
 | 00 | [docs/00-dev-environment.md](docs/00-dev-environment.md) | implemented | No | Toolchain: simulator, synthesis, waveform viewer |
 | 01 | [01-hdl-basics/](01-hdl-basics/) | implemented | No | Counters, blinky, your first testbenches |
 | 02 | [02-golden-models/](02-golden-models/) | implemented | No | SemNPU building blocks: popcount, Hamming, int8 dot product — each verified against a Python golden model |
-| 03 | [03-hdmi/](03-hdmi/) | implemented | Yes (sim for timing) | HDMI/DVI **timing core**: 720p timing generator + colour-bar pixel generator, sim-proven; blinky board smoke-test bitstream; TMDS/PLL serializer top is the next hardware step |
-| 04 | [04-tilemap-sprites/](04-tilemap-sprites/) | implemented | Yes | Tile/sprite PPU: tilemap, palette, sprite overlay |
-| 05 | [05-input-audio/](05-input-audio/) | implemented | Yes | Buttons/controller input, square-wave audio via MAX98357A |
+| 03 | [03-hdmi/](03-hdmi/) | implemented | Yes (sim for timing/TMDS) | HDMI/DVI **timing path**: 720p timing, colour bars, TMDS encoder, and blinky board smoke-test bitstream |
+| 04 | [04-tilemap-sprites/](04-tilemap-sprites/) | implemented | Yes | Tile/sprite PPU core for the 320×180 internal render target, with sprite overlay and palette output |
+| 05 | [05-input-audio/](05-input-audio/) | implemented | Yes | Debounced button input, square/noise audio voices, mixer, and 16-bit stereo serial audio output |
 | 06 | [06-riscv-soc/](06-riscv-soc/) | implemented | No | **SemRV**: PicoRV32 SoC running hand-assembled RV32I firmware — boots, prints over UART, drives the NPU |
 | 07 | [07-semnpu/](07-semnpu/) | implemented | No | The SemNPU coprocessor register file: POPAND, HAMMING, DOT8 — integrated into the stage 06 SoC |
 | 08 | [08-zephyr-port/](08-zephyr-port/) | implemented | Yes | Zephyr board port: devicetree, `eoin,semnpu` binding, driver, sample app (out-of-tree module) |
-| 09 | [09-retro-cpu-cores/](09-retro-cpu-cores/) | implemented | Yes | Pluggable retro CPUs (65C816 / ARM7TDMI / SM83) for the GB-Studio-like engine builder |
+| 09 | [09-retro-cpu-cores/](09-retro-cpu-cores/) | implemented | Yes | Byte-wide retro CPU socket for plugging 6502/65C816/SM83-style cores into the SemBoy MMIO bus |
 
 Each stage directory has its own README with goals, theory, exercises, and
 a `make` flow. Do them in order — every stage reuses modules from the one
-before it. Stages 01, 02, 03 (sim), 06, and 07 are fully runnable today
-with no hardware; try `cd 06-riscv-soc && make` to watch a RISC-V CPU
-boot and drive the inference coprocessor in simulation.
+before it. The top-level `make sim` regression runs every simulation-ready
+stage: HDL basics, golden models, HDMI/TMDS, PPU, input/audio, SemRV,
+SemNPU, and the retro CPU socket.
 
 Dependencies between stages — the two tracks are parallel after 03:
 
@@ -59,10 +59,8 @@ flowchart LR
 # 3. Check everything works
 .\tools\check-env.ps1
 
-# 4. Run your first simulation
-cd 01-hdl-basics
-make          # runs all testbenches
-make waves    # opens the waveform viewer
+# 4. Run the full simulation regression
+make sim
 ```
 
 ## Repository layout

@@ -6,8 +6,8 @@ schedules threads, so the hardware must provide a system timer and an
 interrupt controller before `hello_world` can even boot.
 
 This directory is a complete **out-of-tree Zephyr module**. The
-structure is final; the `TODO(csr)` addresses get filled in from your
-generated SoC.
+structure is final and uses the common LiteX UART/timer CSR layout plus
+the fixed SemNPU MMIO base from the RTL.
 
 ## The route
 
@@ -20,8 +20,8 @@ already supports (`litex_vexriscv` board, `litex,uart` / `litex,timer0` /
    `sipeed_tang_nano_20k` target) and generate a VexRiscv SoC with
    `--with-uart --timer` for this board.
 2. LiteX emits `csr.json` — every peripheral's base address and IRQ.
-   Copy those numbers into `tangnano20k_semrv.dts` (they replace each
-   `TODO(csr)` marker).
+   The checked-in DTS uses the common LiteX UART/timer layout; update it
+   only if your generated SoC chooses different CSR addresses.
 3. Add the SemNPU as a LiteX CSR peripheral or a plain wishbone slave at
    a fixed address — `semnpu_regs.v` drops in with a thin wishbone shim.
 4. Build the sample: `west build -b tangnano20k_semrv 08-zephyr-port/app`
