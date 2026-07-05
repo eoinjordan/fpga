@@ -1,10 +1,12 @@
 # Vendor reference repos (recloned via tools/clone-vendor.ps1)
 vendor/
 
-# Simulation outputs
+# Simulation and synthesis outputs
 *.vcd
 *.fst
 *.vvp
+*.json
+*.fs
 build/
 
 # Generated test vectors
