@@ -1,6 +1,6 @@
 IVERILOG ?= iverilog
 VVP      ?= vvp
-PYTHON   ?= python
+PYTHON   ?= python3
 # no -Wall here: third_party/picorv32.v is upstream code with benign warnings
 FLAGS     = -g2012
 

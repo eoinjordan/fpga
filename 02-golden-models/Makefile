@@ -1,6 +1,6 @@
 IVERILOG ?= iverilog
 VVP      ?= vvp
-PYTHON   ?= python
+PYTHON   ?= python3
 FLAGS     = -g2012 -Wall -Irtl
 
 TBS = tb_popand tb_hamming tb_dot8
