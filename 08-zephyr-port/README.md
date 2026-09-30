@@ -1,18 +1,21 @@
 # Stage 08 — Zephyr board port + SemNPU driver
 
-**Prerequisite: stage 06 running on the board with a real UART, timer,
-and interrupt controller.** Zephyr is not "bare metal but bigger" — it
-schedules threads, so the hardware must provide a system timer and an
-interrupt controller before `hello_world` can even boot.
+**Gowin import status:** this is a software module, not a generated FPGA
+SoC. No standalone `.gprj` is supplied: generate the LiteX/VexRiscv hardware
+described below first. The stage 06/07 Gowin projects run bare-metal demos
+and do not provide the hardware required to boot this Zephyr port.
 
-This directory is a complete **out-of-tree Zephyr module**. The
-structure is final and uses the common LiteX UART/timer CSR layout plus
-the fixed SemNPU MMIO base from the RTL.
+**Prerequisite: a LiteX/VexRiscv SoC with UART, timer and interrupt
+controller.** The stage 06 PicoRV32 demo does not provide that hardware.
+
+This directory contains an **out-of-tree Zephyr module** using a LiteX
+UART/timer CSR layout and the SemNPU MMIO base from the RTL. Its addresses
+must match the generated SoC before the firmware can run.
 
 ## The route
 
-PicoRV32 (stage 06) is perfect for learning but has no Zephyr-standard
-timer/intc story. The proven path is **LiteX + VexRiscv**, which Zephyr
+The stage 06 PicoRV32 SoC lacks the timer and interrupt controller this
+port expects. Use **LiteX + VexRiscv**, which Zephyr
 already supports (`litex_vexriscv` board, `litex,uart` / `litex,timer0` /
 `litex,vexriscv-intc0` drivers all upstream):
 
@@ -35,7 +38,7 @@ already supports (`litex_vexriscv` board, `litex,uart` / `litex,timer0` /
 zephyr/module.yml                       tells west this repo is a Zephyr module
 boards/eoin/tangnano20k_semrv/
   board.yml                             board identity
-  tangnano20k_semrv.dts                 THE deliverable: hardware described in devicetree
+  tangnano20k_semrv.dts                 hardware described in devicetree
   tangnano20k_semrv_defconfig           default kernel config for this board
   Kconfig.tangnano20k_semrv             board Kconfig glue
 dts/bindings/misc/eoin,semnpu.yaml      your own devicetree binding — the NPU's "type"
@@ -46,7 +49,7 @@ app/                                    sample: prints NPU results to the Zephyr
 
 ## How a register address travels from RTL to your app
 
-The whole point of devicetree, in one picture — nothing between the
+The driver gets its register address from devicetree. Nothing between the
 `.dts` and the application hardcodes `0x80001000`:
 
 ```mermaid
@@ -63,10 +66,9 @@ flowchart TD
     DTS --> GEN --> DRV --> APP
 ```
 
-Change the NPU's base address? Edit the SoC wiring and the one `reg`
-line in the `.dts` — driver and app rebuild correctly, untouched. That
-is the entire value proposition of the devicetree model, and why every
-serious RTOS/OS adopted it.
+To change the NPU's base address, update the SoC wiring and the `reg`
+property in the `.dts`. The driver and application use that generated
+address when rebuilt.
 
 ## Reading order (this is the lesson)
 

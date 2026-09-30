@@ -1,7 +1,11 @@
 # Stage 03 — HDMI colour bars
 
-**Needs board: for the final step.** The video timing core — the part
-people actually get wrong — is built and proven in simulation first.
+Gowin IDE: open [gowin/tangnano20k.gprj](gowin/tangnano20k.gprj).
+See the [Tang Nano 20K guide](../boards/tangnano20k/README.md) for the
+board demo, build steps and verification limits.
+
+**Needs board: for HDMI output.** Timing and TMDS encoding can be tested
+in simulation.
 
 ## Theory in one paragraph
 
@@ -74,7 +78,7 @@ flowchart LR
 
 | File | Status |
 |------|--------|
-| [rtl/video_timing.v](rtl/video_timing.v) | sim-proven timing generator |
+| [rtl/video_timing.v](rtl/video_timing.v) | timing generator checked by a full-frame testbench |
 | [rtl/colorbars.v](rtl/colorbars.v) | 8-bar SMPTE-ish pattern from (x, y) |
 | [rtl/tmds_encoder.v](rtl/tmds_encoder.v) | 8b/10b TMDS video/control encoder |
 | [rtl/hdmi_colorbars.v](rtl/hdmi_colorbars.v) | timing + colour bars + three TMDS lanes |
@@ -82,13 +86,13 @@ flowchart LR
 | [tb/tb_tmds_encoder.v](tb/tb_tmds_encoder.v) | checks TMDS control tokens and data symbols |
 | [constraints/tangnano20k.cst](constraints/tangnano20k.cst) | verified pins: clock, LEDs, buttons, HDMI |
 
-## Run the sim (today, no board)
+## Run the simulation
 
 ```powershell
 make        # full 720p timing test + TMDS encoder checks
 ```
 
-## On the board (when it arrives)
+## On the board
 
 **First: blinky smoke test.** Prove the whole flow with stage 01's design:
 
@@ -97,18 +101,18 @@ make blinky.fs                              # yosys -> nextpnr -> gowin_pack
 openFPGALoader -b tangnano20k blinky.fs     # LED blinks at 1 Hz
 ```
 
-**Then: HDMI.** The remaining hardware-specific pieces are Gowin
-primitives that can't be simulated with plain iverilog:
+**HDMI:** `gowin/tangnano20k.gprj` includes the board clock and output
+primitives. Icarus checks their connectivity using blackbox declarations;
+clock and serializer operation need Gowin simulation or a board test:
 
 1. an `rPLL` making 371.25 MHz from the 27 MHz crystal, plus `CLKDIV` /5
    for the 74.25 MHz pixel clock;
 2. `OSER10` DDR serializers pushing 10 bits per pixel clock out the
-   differential pins, plus `ELVDS_OBUF` output buffers.
+   differential pins, plus `TLVDS_OBUF` output buffers.
 
-Sipeed's working reference is `vendor/TangNano-20K-example/hdmi/` — it
-uses Gowin's DVI_TX IP, so build it once with Gowin EDA to prove your
-monitor/cable, then replace the IP with your own encoder + OSER10 under
-the open flow. Project Apicula supports OSER10 and the PLL on this chip.
+The supplied project uses the stage's TMDS encoder and Gowin primitives.
+Sipeed's `vendor/TangNano-20K-example/hdmi/` is a separate reference using
+Gowin DVI_TX IP. The supplied project does not depend on that checkout.
 
 ## Exercises
 

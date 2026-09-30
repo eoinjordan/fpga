@@ -1,5 +1,9 @@
 # Stage 02 — Golden models and the first SemNPU blocks
 
+Gowin IDE: open [gowin/tangnano20k.gprj](gowin/tangnano20k.gprj).
+See the [Tang Nano 20K guide](../boards/tangnano20k/README.md) for the
+board demo, build steps and verification limits.
+
 **Needs board: no.** This stage builds the datapath blocks that become the
 semantic/inference coprocessor in stage 07 — and teaches the verification
 discipline used for every block from here on.
@@ -30,10 +34,9 @@ flowchart LR
     CMP -->|any mismatch| FAIL(["FAIL, $fatal, make stops"])
 ```
 
-Python computes the truth. Hardware must agree with it, bit for bit,
-on hundreds of random cases plus directed edge cases. If you ever change
-the RTL, `make` re-proves it. This is exactly how you'll validate the
-int8 blocks against Edge Impulse feature data later.
+Python computes reference results. The testbenches compare the RTL outputs
+against random inputs and directed edge cases. Run `make` after changing
+the RTL. The same comparison can be used for Edge Impulse feature data.
 
 ## Blocks
 

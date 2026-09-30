@@ -4,10 +4,9 @@ A follow-along series that ends with a retro-style FPGA console with a
 semantic/inference coprocessor, built on the [Sipeed Tang Nano 20K](https://wiki.sipeed.com/hardware/en/tang/tang-nano-20k/nano-20k.html)
 (Gowin GW2AR-LV18QN88C8/I7).
 
-The series is **sim-first**: stages 01 and 02 run entirely on your PC with
-the open-source toolchain, so you can make real progress before the board
-arrives. Board stages (03+) use verified pin constraints from Sipeed's
-official examples in `vendor/`.
+Each stage can be studied and tested separately. Stages 01 and 02 run
+without a board, and also have LED demos for the Tang Nano 20K. Board
+constraints follow Sipeed's official examples.
 
 Start with [docs/architecture.md](docs/architecture.md) — the one-page
 map of the machine all ten stages build — and keep
@@ -51,6 +50,12 @@ flowchart LR
 
 ## Quick start
 
+For **Gowin IDE on Tang Nano 20K**, open any stage's
+`gowin/tangnano20k.gprj`. Stages 01–07 and 09 include board demos, device
+settings, pin/timing constraints, and all source dependencies. See the
+[Gowin project guide](boards/tangnano20k/README.md) for the project list,
+build instructions and the stage 08 Zephyr hardware prerequisite.
+
 ```powershell
 # 1. One-time setup (installs/locates tools) — see docs/00-dev-environment.md
 # 2. Every session: put the toolchain on PATH
@@ -84,7 +89,7 @@ vendor-neutral and board glue lives in per-board directories:
 
 | Board | Status | Port files |
 |-------|--------|------------|
-| Tang Nano 20K (Gowin GW2AR-18) | primary; open-flow synthesis path with a blinky smoke-test bitstream (unflashed — board in transit); vendor-flow fallback for PLL/DVI/SDRAM IP | `03-hdmi/constraints/` + Makefiles |
+| Tang Nano 20K (Gowin GW2AR-18C) | Gowin projects for stages 01–07 and 09; simulations checked, vendor P&R and hardware tests pending | `01-.../gowin/` + [board guide](boards/tangnano20k/README.md) |
 | Seeed Spartan Edge (Xilinx XC7S15) | in hand; Vivado batch flow ready (unrun — Vivado not yet installed) | [boards/spartan-edge/](boards/spartan-edge/) |
 
 ## Scope and non-goals

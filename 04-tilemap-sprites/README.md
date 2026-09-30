@@ -1,5 +1,9 @@
 # Stage 04 — Tile/sprite PPU
 
+Gowin IDE: open [gowin/tangnano20k.gprj](gowin/tangnano20k.gprj).
+See the [Tang Nano 20K guide](../boards/tangnano20k/README.md) for the
+board demo, build steps and verification limits.
+
 **Prerequisite: stage 03 colour bars on a real monitor.**
 
 The console's picture processor. No framebuffer — a 720p frame doesn't fit

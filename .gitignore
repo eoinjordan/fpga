@@ -20,6 +20,9 @@ build/
 
 # Gowin EDA project junk
 impl/
+!*/gowin/impl/
+*/gowin/impl/*
+!*/gowin/impl/project_process_config.json
 *.gprj.user
 
 # Python

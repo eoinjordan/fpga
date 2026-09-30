@@ -1,27 +1,30 @@
 # Stage 09 — Retro CPU cores for the game-engine builder
 
+Gowin IDE: open [gowin/tangnano20k.gprj](gowin/tangnano20k.gprj).
+See the [Tang Nano 20K guide](../boards/tangnano20k/README.md) for the
+board demo, build steps and verification limits.
+
 **Prerequisite: stage 06.** After integrating PicoRV32 you know the
 drill: CPU core + bus + RAM + memory-mapped peripherals. A retro CPU is
 the same job with a different (and much quirkier) core.
 
-## First, the honest resource math
+## FPGA resource estimates
 
 Full console clones do NOT fit the Tang Nano 20K. Known data points:
 NESTang fits a 20K; SNESTang and GBATang both require Tang Mega
 60K/138K-class parts. A complete SNES (CPU+PPU+APU+DSP) or GBA
 (ARM7TDMI+PPU+sound+DMA) is 3–5× our LUT budget.
 
-**But you don't want a console clone — you want a game-engine builder.**
-That changes everything: keep the SemBoy PPU/APU (stages 04/05, sized
-for this chip), and swap only the *CPU* so your engine speaks a
-familiar instruction set. CPU cores alone fit easily:
+The proposed engine reuses the SemBoy PPU/APU from stages 04/05 and
+changes the CPU. The estimates below are for CPU cores alone; total
+resource use depends on configuration and integration:
 
 | Core | ISA | ~LUTs | Fit? |
 |------|-----|-------|------|
-| Arlet Ottens 6502 | 6502 (NES) | ~1k | trivially |
+| Arlet Ottens 6502 | 6502 (NES) | ~1k | yes |
 | P65C816 (srg320, from SNESTang/MiSTer) | 65C816 (SNES) | ~4–6k | yes |
 | ARM7TDMI cores (e.g. GBATang's) | ARMv4T (GBA) | ~8–12k | yes, snug next to a PPU |
-| SM83 cores (e.g. from VerilogBoy/MiSTer GB) | Game Boy CPU | ~2k | trivially |
+| SM83 cores (e.g. from VerilogBoy/MiSTer GB) | Game Boy CPU | ~2k | yes |
 
 Note: **GB Studio targets the Game Boy**, so if "GB-Studio-like" is
 literal, the SM83 track gives you binary-level familiarity — GBDK-2020
@@ -55,10 +58,10 @@ make
 
 ### 09b — GBA CPU track (ARM7TDMI)
 1. Vendor an open ARM7TDMI-compatible core (GBATang's and MiSTer GBA's
-   are the proven ones; check licenses when you vendor).
-2. The prize: **GCC targets it directly** (`arm-none-eabi-gcc
+   are examples; check licenses before vendoring).
+2. **GCC targets it directly** (`arm-none-eabi-gcc
    -mcpu=arm7tdmi`), so your engine's game logic is plain C with a
-   mature compiler — by far the best software story of the three.
+   compiler supporting C and assembly.
 3. Thumb (16-bit) instructions halve code size — matters with BSRAM.
 4. Milestone: C compiled for ARM7TDMI running the same demo as 09a.
 
@@ -80,6 +83,6 @@ engine spec (fixed):          builder side (per game):
 ```
 
 Because stages 04/05/07 hang off a generic bus, the CPU is a socket:
-RISC-V for the modern story, 65C816/ARM7TDMI/SM83 for the retro one.
-Same game assets, same PPU, different brain. The implemented socket is
-the stable hardware contract those cores plug into.
+The byte-wide socket is intended for 6502/65C816/SM83-style cores.
+A wider ARM bus needs an additional adapter. The PPU/APU bus integration
+and these CPU cores are future work.

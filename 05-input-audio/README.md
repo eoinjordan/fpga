@@ -1,5 +1,9 @@
 # Stage 05 — Input and audio
 
+Gowin IDE: open [gowin/tangnano20k.gprj](gowin/tangnano20k.gprj).
+See the [Tang Nano 20K guide](../boards/tangnano20k/README.md) for the
+board demo, build steps and verification limits.
+
 **Prerequisite: stage 04 sprites moving on screen.**
 
 ## Input

@@ -41,7 +41,7 @@ with both pins listed: `IO_LOC "tmds_clk_p" 33,34;`
 
 - LEDs are **active-low**: write 0 to light one.
 - Buttons have pull-**downs**: pressed = 1 (opposite of most dev boards).
-- The SDRAM is SDR, not DDR — use the proven controller from NESTang
+- The SDRAM is SDR, not DDR — use the controller from NESTang as a reference
   (`vendor/TangNano-20K-example/nestang/`) rather than writing one first.
 - BSRAM blocks are 18 Kbit each; a 720p framebuffer does NOT fit in BSRAM
   (1280×720×8bpp ≈ 7.4 Mbit). This is why stage 04 builds a tile engine

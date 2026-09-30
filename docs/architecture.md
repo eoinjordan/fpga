@@ -1,7 +1,8 @@
 # SemBoy-20K — system architecture
 
-The whole series builds one machine. This page is the map; each stage
-README zooms into one box.
+This diagram describes the planned system. The checked-in stages are
+separate demos; CPU, PPU, audio and SDRAM are not yet integrated into
+one console. Each stage README describes its implemented modules.
 
 ## The full system
 
@@ -77,7 +78,7 @@ flowchart TD
     HW["4 - Real board<br/>UART reports from hardware"]
     ZE["5 - Zephyr app<br/>stage 08 sample prints the same numbers"]
 
-    PY -->|"defines truth"| RTL -->|"blocks proven"| SOC -->|"bus + firmware proven"| HW -->|"silicon proven"| ZE
+    PY -->|"reference results"| RTL -->|"RTL comparison"| SOC -->|"firmware comparison"| HW -->|"board comparison"| ZE
 ```
 
 ## One frame of the console's life

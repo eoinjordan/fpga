@@ -1,7 +1,11 @@
 # Stage 07 — The SemNPU coprocessor (register file working in simulation)
 
+Gowin IDE: open [gowin/tangnano20k.gprj](gowin/tangnano20k.gprj).
+See the [Tang Nano 20K guide](../boards/tangnano20k/README.md) for the
+board demo, build steps and verification limits.
+
 The stage 02 blocks wrapped in a memory-mapped register file a CPU can
-drive. **Already integrated and proven**: stage 06's testbench boots
+drive. Stage 06's testbench boots
 PicoRV32 firmware that exercises every register below and checks results
 against the Python golden model. Run it from `06-riscv-soc/` with `make`.
 

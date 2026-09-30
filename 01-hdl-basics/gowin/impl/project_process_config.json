@@ -1,0 +1,11 @@
+{
+  "Process_Configuration_Verion": "1.0",
+  "Synthesize_tool": "GowinSyn",
+  "TopModule": "tangnano20k_top",
+  "Verilog_Standard": "Vlg_Std_Sysv2017",
+  "OUTPUT_BASE_NAME": "tangnano20k",
+  "IncludePath": [],
+  "Implicit_Initial_Value_Support": true,
+  "Promote_Physical_Constraint_Warning_to_Error": true,
+  "Run_Timing_Driven": true
+}

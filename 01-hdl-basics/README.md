@@ -1,13 +1,17 @@
 # Stage 01 — HDL basics
 
+Gowin IDE: open [gowin/tangnano20k.gprj](gowin/tangnano20k.gprj).
+See the [Tang Nano 20K guide](../boards/tangnano20k/README.md) for the
+board demo, build steps and verification limits.
+
 **Needs board: no.** Everything here runs in Icarus Verilog.
 
 ## Goals
 
 - Write synthesizable Verilog: `always @(posedge clk)`, non-blocking
   assignment, reset, parameters.
-- Write a **self-checking testbench** — the habit that carries the whole
-  series. A testbench that needs a human to stare at waveforms doesn't scale.
+- Write a testbench that compares outputs with expected values and fails
+  automatically on a mismatch.
 - Read a waveform in GTKWave.
 
 ## Modules
@@ -17,8 +21,7 @@
 | [rtl/counter.v](rtl/counter.v) | Registers, reset, enable, parameterized width |
 | [rtl/blinky.v](rtl/blinky.v) | Clock division by counting — 27 MHz down to human speed |
 
-`blinky.v` is also your **first board target** when the Tang Nano arrives
-(stage 03's Makefile synthesizes it — see `03-hdmi/README.md`).
+`blinky.v` also runs on the board through `gowin/tangnano20k.gprj`.
 
 ## What the counter looks like on a waveform
 

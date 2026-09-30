@@ -1,7 +1,8 @@
 # Stage 00 — Dev environment
 
-Two toolchains matter for the Tang Nano 20K. You need the first one today;
-the second can wait until the board arrives.
+Use Icarus Verilog for simulation and Gowin IDE for the supplied Tang Nano
+20K projects. See the [board guide](../boards/tangnano20k/README.md) for
+Windows, macOS and Linux commands.
 
 ## 1. OSS CAD Suite (required — simulation + open-source synthesis)
 

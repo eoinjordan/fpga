@@ -7,12 +7,20 @@ on:
 
 jobs:
   sim:
-    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        os: [ubuntu-latest, macos-latest]
+    runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v4
 
-      - name: Install Icarus Verilog
-        run: sudo apt-get update && sudo apt-get install -y --no-install-recommends iverilog
+      - name: Install Icarus Verilog and Gowin primitive declarations
+        if: runner.os == 'Linux'
+        run: sudo apt-get update && sudo apt-get install -y --no-install-recommends iverilog yosys
+
+      - name: Install tools on macOS
+        if: runner.os == 'macOS'
+        run: brew install icarus-verilog yosys
 
       - name: Python generators run standalone
         run: |
@@ -21,3 +29,9 @@ jobs:
 
       - name: Full simulation regression
         run: make sim PYTHON=python3
+
+      - name: Gowin project manifests and top-level elaboration
+        run: python3 tools/check-gowin.py
+
+      - name: Tang Nano board integration simulations
+        run: python3 tools/run-simulations.py --board-only

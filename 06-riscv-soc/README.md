@@ -1,5 +1,9 @@
 # Stage 06 — SemRV: a PicoRV32 SoC (working in simulation)
 
+Gowin IDE: open [gowin/tangnano20k.gprj](gowin/tangnano20k.gprj).
+See the [Tang Nano 20K guide](../boards/tangnano20k/README.md) for the
+board demo, build steps and verification limits.
+
 **Needs board: no** for everything on this page. The whole SoC — CPU,
 RAM, MMIO, and the stage 07 SemNPU — boots and runs firmware in Icarus.
 
@@ -78,24 +82,22 @@ needs to play this one handshake.
 ## Why the firmware is hand-assembled
 
 `build_firmware.py` encodes LUI/ADDI/LW/SW/JAL bit by bit — read it next
-to the RISC-V spec's instruction-format tables and you'll understand
-instruction encoding better than any compiler user ever does. It also
-computes the golden NPU results in Python, so the testbench proves the
-**hardware** and the **software's view of the hardware** agree.
+to the RISC-V instruction-format tables to follow each encoding. It also
+computes reference NPU results in Python, which the testbench compares
+with the firmware's reports.
 
 ## The upgrade path (in order)
 
 1. **riscv-gcc firmware.** Install the xPack `riscv-none-elf-gcc`
    toolchain, write `start.S` + linker script + C main, and replace
    `firmware.hex`. PicoRV32's upstream `firmware/` directory is the
-   template. Now you can write real programs.
-2. **Real UART.** Replace the `uart_wr` tap with a 8N1 TX shift register
-   at 115200 baud on pin 69 → `hello` over USB serial on the board.
-   Sipeed's `vendor/TangNano-20K-example/picorv32/` proves the wiring.
-3. **On the board.** Synthesize with the stage 03 flow (add the SoC files
-   to a yosys target). PicoRV32 small config ≈ 1500 LUTs of our 20,736.
+   template for startup and linker code.
+2. **UART on hardware.** The Gowin board top buffers `uart_wr` writes and
+   transmits at 115200 baud on pin 69.
+3. **On the board.** Open `gowin/tangnano20k.gprj` and follow the
+   [board guide](../boards/tangnano20k/README.md).
 4. **Interrupts + timer.** Enable `ENABLE_IRQ`, add a machine timer —
-   this is exactly what stage 08 (Zephyr) needs from the hardware.
+   stage 08 also needs a matching interrupt architecture and LiteX peripherals.
 5. **Point it at the PPU/APU** (stages 04/05) — then C code moves sprites
    and plays notes, and the console is programmable.
 
