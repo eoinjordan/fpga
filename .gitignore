@@ -23,6 +23,9 @@ impl/
 !*/gowin/impl/
 */gowin/impl/*
 !*/gowin/impl/project_process_config.json
+!*/gowin-lcd/impl/
+*/gowin-lcd/impl/*
+!*/gowin-lcd/impl/project_process_config.json
 *.gprj.user
 
 # Python

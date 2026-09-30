@@ -1,8 +1,13 @@
-# Stage 03 — HDMI colour bars
+# Stage 03 — LCD and HDMI colour bars
 
 Gowin IDE: open [gowin/tangnano20k.gprj](gowin/tangnano20k.gprj).
 See the [Tang Nano 20K guide](../boards/tangnano20k/README.md) for the
 board demo, build steps and verification limits.
+
+For the 4.3-inch 480×272 screen used by `GBA-FPGA`, open
+[gowin-lcd/tangnano20k.gprj](gowin-lcd/tangnano20k.gprj).
+It uses 9 MHz parallel RGB output; the HDMI project uses 720p TMDS.
+The [LCD guide](../boards/tangnano20k/LCD.md) covers wiring and timing.
 
 **Needs board: for HDMI output.** Timing and TMDS encoding can be tested
 in simulation.

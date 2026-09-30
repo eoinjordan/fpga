@@ -50,6 +50,12 @@ flowchart LR
 
 ## Quick start
 
+For the **HT043IBB-16A3047-H4 4.3-inch LCD** used by `GBA-FPGA`, open
+`03-hdmi/gowin-lcd/tangnano20k.gprj` for colour bars or
+`04-tilemap-sprites/gowin-lcd/tangnano20k.gprj` for the PPU demo.
+See the [LCD setup guide](boards/tangnano20k/LCD.md). Leave HDMI unplugged
+when using the LCD because the connectors share FPGA pins.
+
 For **Gowin IDE on Tang Nano 20K**, open any stage's
 `gowin/tangnano20k.gprj`. Stages 01–07 and 09 include board demos, device
 settings, pin/timing constraints, and all source dependencies. See the

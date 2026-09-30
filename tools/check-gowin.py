@@ -35,8 +35,8 @@ def main():
         (p for p in candidates if p.exists()), candidates[0])
     if not cells.exists():
         raise SystemExit('Set GOWIN_SIM_CELLS to Yosys gowin/cells_sim.v')
-    projects = sorted(ROOT.glob('0*/gowin/tangnano20k.gprj'))
-    assert len(projects) == 8, f'Expected eight hardware projects, found {len(projects)}'
+    projects = sorted(ROOT.glob('0*/gowin*/tangnano20k.gprj'))
+    assert len(projects) == 10, f'Expected ten hardware projects, found {len(projects)}'
     with tempfile.TemporaryDirectory() as tmp:
         # Yosys supplies rPLL, OSER10 and TLVDS_OBUF declarations but no CLKDIV.
         # This blackbox checks connectivity only, not video clock behavior.
@@ -77,6 +77,14 @@ endmodule\n''')
                     if hi is None: ports.add(name)
                     else: ports.update(f'{name}[{bit}]' for bit in range(lo, hi+1))
             cst = (directory / 'tangnano20k.cst').read_text()
+            if directory.name == 'gowin-lcd':
+                expected = {'lcd_dclk': '77', 'lcd_de': '48', 'lcd_hsync': '25', 'lcd_vsync': '26'}
+                expected.update({f'lcd_r[{i}]': str(42-i) for i in range(5)})
+                expected.update({f'lcd_g[{i}]': str(37-i) for i in range(6)})
+                expected.update({f'lcd_b[{i}]': str(31-i) for i in range(5)})
+                actual = dict(re.findall(r'IO_LOC "([^"]+)" ([\d,]+);', cst))
+                assert all(actual.get(k) == v for k, v in expected.items()), 'LCD pin map mismatch'
+                assert 'tmds_' not in cst, 'LCD and HDMI share pins and require separate projects'
             constrained = set(re.findall(r'IO_LOC "([^"]+)"', cst))
             for positive in list(constrained):
                 if '_p' in positive: constrained.add(positive.replace('_p', '_n'))

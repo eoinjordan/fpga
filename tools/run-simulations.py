@@ -25,9 +25,9 @@ sources = [str(p) for p in ROOT.glob('0*/rtl/*.v')]
 sources.append(str(ROOT / '06-riscv-soc/third_party/picorv32.v'))
 
 with tempfile.TemporaryDirectory() as tmp:
-    def simulate(tb, rtl, cwd):
+    def simulate(tb, rtl, cwd, defines=()):
         output = str(Path(tmp) / (tb.stem + '.vvp'))
-        subprocess.run([*compiler, '-g2012', '-s', tb.stem, '-o', output, str(tb), *rtl], check=True)
+        subprocess.run([*compiler, '-g2012', *defines, '-s', tb.stem, '-o', output, str(tb), *rtl], check=True)
         result = subprocess.run([*runtime, output.replace('\\', '/')], cwd=cwd, text=True, capture_output=True)
         print(result.stdout.strip())
         if result.returncode:
@@ -47,3 +47,11 @@ with tempfile.TemporaryDirectory() as tmp:
                if f.attrib['type'] == 'file.verilog']
         test = 'tb_board_audio.v' if stage == '05-input-audio' else 'tb_board_demo.v'
         simulate(ROOT / 'boards/tangnano20k/tb' / test, rtl, directory)
+    for stage in ['03-hdmi', '04-tilemap-sprites']:
+        directory = ROOT / stage / 'gowin-lcd'
+        xml = ET.parse(directory / 'tangnano20k.gprj')
+        rtl = [str(directory / f.attrib['path']) for f in xml.findall('FileList/File')
+               if f.attrib['type'] == 'file.verilog']
+        rtl.append(str(ROOT / 'boards/tangnano20k/tb/lcd_pll_model.v'))
+        simulate(ROOT / 'boards/tangnano20k/tb/tb_board_lcd.v', rtl, directory,
+                 ['-DPPU'] if stage == '04-tilemap-sprites' else [])

@@ -4,6 +4,11 @@ Gowin IDE: open [gowin/tangnano20k.gprj](gowin/tangnano20k.gprj).
 See the [Tang Nano 20K guide](../boards/tangnano20k/README.md) for the
 board demo, build steps and verification limits.
 
+For the 4.3-inch 480×272 screen used by `GBA-FPGA`, open
+[gowin-lcd/tangnano20k.gprj](gowin-lcd/tangnano20k.gprj).
+This scales the 320×180 PPU to 480×270, centred between two black rows.
+See the [LCD guide](../boards/tangnano20k/LCD.md).
+
 **Prerequisite: stage 03 colour bars on a real monitor.**
 
 The console's picture processor. No framebuffer — a 720p frame doesn't fit

@@ -271,17 +271,26 @@ def main():
         endcase
     end
     assign led_n = {4'b1111, ~(state == 2), ~passed};'''), {}))
+    lcd_variants = runpy.run_path(str(ROOT / 'tools/gowin-lcd.py'))
+    projects += lcd_variants['projects'](top)
     for stage, sources, rtl, opts in projects:
-        directory = ROOT / stage / 'gowin'
+        directory = ROOT / stage / opts.get('folder', 'gowin')
         write(directory / 'tangnano20k_top.v', rtl)
         pins = [('clk', '4'), ('btn_s1', '88')] + [('led_n[%d]' % i, str(15+i)) for i in range(6)]
         if opts.get('uart'): pins.append(('uart_tx', '69'))
         if opts.get('audio'):
             pins += [('btn_s2', '87'), ('audio_en', '51'), ('audio_sd', '54'), ('audio_ws', '55'), ('audio_bclk', '56')]
+        if opts.get('lcd'):
+            pins += [('lcd_dclk', '77'), ('lcd_de', '48'), ('lcd_hsync', '25'), ('lcd_vsync', '26')]
+            pins += [(f'lcd_r[{i}]', str(42-i)) for i in range(5)]
+            pins += [(f'lcd_g[{i}]', str(37-i)) for i in range(6)]
+            pins += [(f'lcd_b[{i}]', str(31-i)) for i in range(5)]
         cst = []
         for signal, pin in pins:
             pull = 'DOWN' if signal.startswith('btn_') else 'UP'
             cst += [f'IO_LOC "{signal}" {pin};', f'IO_PORT "{signal}" IO_TYPE=LVCMOS33 PULL_MODE={pull};']
+            if signal.startswith('lcd_'):
+                cst[-1] = f'IO_PORT "{signal}" IO_TYPE=LVCMOS33 PULL_MODE=UP DRIVE=24;'
         if opts.get('hdmi'):
             for signal, pair in [('tmds_clk_p', '33,34'), ('tmds_d_p[0]', '35,36'),
                                  ('tmds_d_p[1]', '37,38'), ('tmds_d_p[2]', '39,40')]:
@@ -293,6 +302,12 @@ def main():
 create_generated_clock -name pixel74 -source [get_pins {clocks/pll/CLKOUT}] -divide_by 5 [get_pins {clocks/divider/CLKOUT}]
 '''
         # Asynchronous buttons are synchronized by board_reset/debounce.
+        if opts.get('lcd'):
+            sdc += '''create_generated_clock -name pixel9 -source [get_ports {clk}] -divide_by 3 [get_pins {clocks/pll/CLKOUT}]
+create_generated_clock -name lcd_dclk -source [get_pins {clocks/pll/CLKOUT}] -divide_by 1 [get_ports {lcd_dclk}]
+set_output_delay -clock lcd_dclk -max 12.000 [get_ports {lcd_de lcd_hsync lcd_vsync lcd_r[*] lcd_g[*] lcd_b[*]}]
+set_output_delay -clock lcd_dclk -min -12.000 [get_ports {lcd_de lcd_hsync lcd_vsync lcd_r[*] lcd_g[*] lcd_b[*]}]
+'''
         sdc += 'set_false_path -from [get_ports {btn_s1}]\n'
         if opts.get('audio'): sdc += 'set_false_path -from [get_ports {btn_s2}]\n'
         write(directory / 'tangnano20k.sdc', sdc)

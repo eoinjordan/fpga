@@ -4,6 +4,10 @@ Open a stage's `gowin/tangnano20k.gprj` using **File → Open** in Gowin
 FPGA Designer. Keep the repository directory structure intact: source paths
 are relative and reuse the existing stage RTL. No vendor checkout is needed.
 
+For the **4.3-inch screen used by GBA-FPGA**, open stage 03 or 04's
+`gowin-lcd/tangnano20k.gprj` instead. See the [LCD guide](LCD.md) for the
+panel profile, connector pins and build instructions.
+
 All projects select **GW2AR-18C / GW2AR-LV18QN88C8/I7**, with
 `tangnano20k_top` as the top module, SystemVerilog 2017 enabled, the board's
 27 MHz input clock constrained, and all external ports assigned to board pins.
@@ -103,7 +107,7 @@ CI runs the project checks and simulations on Linux and macOS.
 ## Regeneration
 
 ```powershell
-python tools/prepare-gowin.py       # regenerate all eight projects and firmware
+python tools/prepare-gowin.py       # regenerate all ten projects and firmware
 python tools/check-gowin.py        # check project manifests, ports and elaboration
 python tools/run-simulations.py    # core regression and board integration tests
 ```

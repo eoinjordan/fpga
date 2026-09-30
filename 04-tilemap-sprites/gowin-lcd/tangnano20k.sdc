@@ -1,0 +1,6 @@
+create_clock -name clk27 -period 37.037 [get_ports {clk}]
+create_generated_clock -name pixel9 -source [get_ports {clk}] -divide_by 3 [get_pins {clocks/pll/CLKOUT}]
+create_generated_clock -name lcd_dclk -source [get_pins {clocks/pll/CLKOUT}] -divide_by 1 [get_ports {lcd_dclk}]
+set_output_delay -clock lcd_dclk -max 12.000 [get_ports {lcd_de lcd_hsync lcd_vsync lcd_r[*] lcd_g[*] lcd_b[*]}]
+set_output_delay -clock lcd_dclk -min -12.000 [get_ports {lcd_de lcd_hsync lcd_vsync lcd_r[*] lcd_g[*] lcd_b[*]}]
+set_false_path -from [get_ports {btn_s1}]
